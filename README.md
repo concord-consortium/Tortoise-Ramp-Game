@@ -1,4 +1,4 @@
-Tortoise-Ramp-Game
+Ramp Game Tortoise Model
 ==================
 
-Tortoise-Ramp-Game
+This is a repository for collaboration upon a Tortoise version of Concord Consortium's Ramp Game model.
