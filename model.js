@@ -88,17 +88,8 @@ function dataExportUpdateRunSeries(a) {
   record()
 
 }
-function myEveryDt() {
-  if (Globals.getGlobal(12)) {
-    runCar();
-  }
-}
-function myEveryOne() {
-  actOnChanges();
-  supportMouse();
-  world.tick();
-}
 function myUserMessage(msg) {
+  window.alert(msg)
 
 }
 function myClearOutput() {
@@ -120,6 +111,10 @@ function startup() {
   Globals.setGlobal(13, false);
   Globals.setGlobal(66, false);
 }
+
+var everyDtDate = Date.now()
+var everyOneDate = Date.now()
+
 function go() {
   if (Globals.getGlobal(11)) {
     AgentSet.ask(world.turtlesOfBreed("DRAWING-DOTS"), true, function() {
@@ -127,6 +122,19 @@ function go() {
     });
     Globals.setGlobal(11, false);
     initialize();
+  }
+
+  if(Date.now() - everyDtDate > 1000 * Globals.getGlobal(30)) {
+    everyDtDate = Date.now()
+    if (Globals.getGlobal(12)) {
+      runCar();
+    }
+  }
+
+  if(Date.now() - everyOneDate > 1000 * .1) {
+    actOnChanges();
+    supportMouse();
+    world.tick();
   }
 }
 function actOnChanges() {
@@ -172,7 +180,7 @@ function initialize() {
   Globals.setGlobal(27, false);
   Globals.setGlobal(39, 50);
   Globals.setGlobal(28, 9.81);
-  Globals.setGlobal(30, 0.01);
+  Globals.setGlobal(30, 0.020);
   Globals.setGlobal(37, 1.34);
   Globals.setGlobal(38, 0.3);
   defineWindow();
@@ -264,15 +272,15 @@ function defineTransforms() {
   Globals.setGlobal(6, (vCenter - (Globals.getGlobal(38) * Globals.getGlobal(39))));
 }
 function supportMouse() {
-  if (!(inWindow_p(MyView.mousexcor, MyView.mouseycor))) {
+  if (!(inWindow_p(session.controller.mouseXcor, session.controller.mouseYcor))) {
     return;
   }
   if (Globals.getGlobal(26)) {
     return;
   }
-  if (MyView.mousedown) {
+  if (session.controller.mouseDown && session.controller.mouseInside) {
     AgentSet.ask(world.turtlesOfBreed("CARS"), true, function() {
-      placeCar(((MyView.mousexcor - Globals.getGlobal(4)) / Globals.getGlobal(3)));
+      placeCar(((session.controller.mouseXcor - Globals.getGlobal(4)) / Globals.getGlobal(3)));
     });
   }
 }
@@ -356,13 +364,13 @@ function runCar() {
     if ((Globals.getGlobal(23) > 4.3)) {
       crash();
     }
-    if ((StrictMath.abs(Globals.getGlobal(25)) > 0.005)) {
+    if ((StrictMath.abs(Globals.getGlobal(25)) > 0.05)) {
       Globals.setGlobal(45, Globals.getGlobal(44));
     }
     else {
       Globals.setGlobal(45, (Globals.getGlobal(45) - 1));
     }
-    if ((Globals.getGlobal(45) < 30)) {
+    if ((Globals.getGlobal(45) < 1)) {
       handleRunEnd();
     }
     placeCar(Globals.getGlobal(23));
@@ -884,7 +892,7 @@ function scoreDisplay() {
     return (Dump("") + Dump(Globals.getGlobal(41)) + Dump(" out of ") + Dump(Globals.getGlobal(54)));
   }
   else {
-    return "";
+    return "&nbsp;";
   }
 }
 function analyzeData() {
@@ -912,7 +920,6 @@ function setupDataExport() {
   var modelInformation = [["ramp", "RampGame.v5b.nlogo", "Jan-7-2014"]];
   var timeSeriesData = [];
   var setup = Prims.list(computationalInputs, representationalInputs, computationalOutputs, studentInputs, modelInformation, timeSeriesData);
-  dataExportInitialize(setup);
 }
 function updateRunSeries(endpoint) {
   var computationalInputs = Prims.list(Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20));

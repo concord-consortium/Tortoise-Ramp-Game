@@ -3202,11 +3202,35 @@ defaultShapes = {
       this.layers.appendChild(this.spotlightView.canvas);
       this.layers.appendChild(this.patchView.canvas);
       this.layers.appendChild(this.turtleView.canvas);
+      this.mouseDown = false;
+      this.mouseInside = false;
+      this.mouseXcor = 0;
+      this.mouseYcor = 0;
+      this.initMouseTracking();
       this.model = new AgentModel();
       this.model.world.turtleshapelist = defaultShapes;
       this.repaint();
     }
 
+    AgentStreamController.prototype.initMouseTracking = function() {
+      var _this = this;
+      this.turtleView.canvas.addEventListener('mousedown', function(e) {
+        return _this.mouseDown = true;
+      });
+      document.addEventListener('mouseup', function(e) {
+        return _this.mouseDown = false;
+      });
+      this.turtleView.canvas.addEventListener('mouseenter', function(e) {
+        return _this.mouseInside = true;
+      });
+      this.turtleView.canvas.addEventListener('mouseleave', function(e) {
+        return _this.mouseInside = false;
+      });
+      return this.turtleView.canvas.addEventListener('mousemove', function(e) {
+        _this.mouseXcor = _this.turtleView.xPixToPcor(e.pageX - _this.layers.offsetLeft);
+        return _this.mouseYcor = _this.turtleView.yPixToPcor(e.pageY - _this.layers.offsetTop);
+      });
+    };
     AgentStreamController.prototype.repaint = function() {
       this.spotlightView.repaint(this.model);
       this.turtleView.repaint(this.model);
@@ -3250,6 +3274,14 @@ defaultShapes = {
       this.canvas.height = this.patchHeight * this.patchsize * this.quality;
       this.ctx.setTransform(this.canvas.width / this.patchWidth, 0, 0, -this.canvas.height / this.patchHeight, -(this.minpxcor - .5) * this.canvas.width / this.patchWidth, (this.maxpycor + .5) * this.canvas.height / this.patchHeight);
       return this.ctx.font = '10pt "Lucida Grande", sans-serif';
+    };
+
+    View.prototype.xPixToPcor = function(x) {
+      return this.minpxcor - .5 + this.patchWidth * x / this.canvas.offsetWidth;
+    };
+
+    View.prototype.yPixToPcor = function(y) {
+      return this.maxpycor + .5 - this.patchHeight * y / this.canvas.offsetHeight;
     };
 
     View.prototype.drawLabel = function(label, color, x, y) {
@@ -3586,7 +3618,7 @@ defaultShapes = {
         }
       }));
     },
-    addSlider: function(display, left, top, right, bottom, setter, min, max, def, step) {
+    addSlider: function(display, left, top, right, bottom, setter, besetter, min, max, def, step) {
       var _this = this;
       return this.widgets.push((function(session) {
         var i, input, inputs, label, slider, update, valueLabel, _i, _len;
@@ -3648,6 +3680,10 @@ defaultShapes = {
         };
         input.value = def;
         input.oninput = update;
+        return _this.widgetUpdateFuncs.push((function() {
+          input.value = besetter()
+          valueLabel.innerHTML = input.value;
+        }));
         return input.onchange = update;
       }));
     },

@@ -1,8 +1,7 @@
 Widgets.addView(10, 28, 643, 475)
-Widgets.addButton("Go", 10, 10, 112, 54, function() { go(); }, true)
 Widgets.addButton("Setup New Run", 114, 253, 211, 287, function() { setupNewRun(); }, false)
 Widgets.addButton("Start", 16, 219, 211, 253, function() { startRun(); }, false)
-Widgets.addSlider("Friction", 15, 298, 211, 331,function(newVal) {Globals.setGlobal(0, newVal);}, 0, .4, 0.18, .005)
+Widgets.addSlider("Friction", 15, 298, 211, 331,function(newVal) {Globals.setGlobal(0, newVal);}, function() {Globals.getGlobal(0);}, 0, .4, 0.18, .005)
 Widgets.addMonitor("Height above Floor", 111, 10, 227, 55, function() { return (Dump("") + Dump(Prims.precision(Globals.getGlobal(31), 2)) + Dump(" m"))})
 Widgets.addMonitor("Distance to the right", 226, 10, 351, 55, function() { return (Dump("") + Dump(Prims.precision(Globals.getGlobal(23), 2)) + Dump(" m"))})
 Widgets.addMonitor("Total Score", 18, 375, 103, 424, function() { return Globals.getGlobal(40)})
@@ -55,6 +54,7 @@ function goForever() {
 
   for (var i=0; i < numUpdates; i++) {
     Widgets.runUpdateFuncs()
+    go()
   }
 
   updateTickCounter();
@@ -66,28 +66,9 @@ function goForever() {
 }
 startup()
 goForever()
-MyView = {mousexcor: 0, mouseycor: 0, mousedown: false}
 
-movecar = function() {
-  myEveryDt()
-  setTimeout(movecar,  20)
-}
-movecar()
-
-changes = function() {
-  myEveryOne()
-  setTimeout(changes, 200)
-}
-changes()
-
-viewContainer = document.getElementsByClassName('view-container')[0]
-viewContainer.addEventListener("mousedown", function(e) {
-  MyView.mousedown = true
-}, false)
-viewContainer.addEventListener("mouseup", function(e) {
-  MyView.mousedown = false
-}, false)
-viewContainer.addEventListener("mousemove", function(e) {
-  MyView.mousexcor = e.clientX - 220
-  MyView.mouseycor = e.clientY - 120
-}, false)
+//changes = function() {
+//  myEveryOne()
+//  setTimeout(changes, 200)
+//}
+//changes()
