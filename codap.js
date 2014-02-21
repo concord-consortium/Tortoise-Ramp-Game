@@ -1,0 +1,68 @@
+function doCommand(action,args) {
+  if(window.parent && window.parent.DG) {
+    var x = window.parent.DG.currGameController.doCommand({action: action, args: args});
+    return x;
+  } else {
+    alert("Not in datagames, couldn't do '" + action + "'!");
+  }
+}
+
+function record() {
+  if(window.parent && window.parent.DG) {
+    parentCase = doCommand('openCase', {
+          collection: "Run",
+          values: [
+            Prims.precision(Globals.getGlobal(6), 1),
+            Prims.precision(Globals.getGlobal(11), 1),
+            Globals.getGlobal(2),
+            Globals.getGlobal(0),
+            Globals.getGlobal(1),
+            Globals.getGlobal(3)
+          ]
+        });
+
+        // Step 5. Create rows in the child table for each data point. Using 'createCases' we can
+        // do this inline, so we don't need to call openCase, closeCase for each row.
+        doCommand('createCases', {
+          collection: "Year",
+          values: yearlyData,
+          parent: parentCase.caseID
+        });
+
+        // Step 6. Close the case.
+        doCommand('closeCase', {
+          collection: "Run",
+          caseID: parentCase.caseID
+        });
+  } else {
+    alert("Not in datagames, couldn't record!");
+  }
+}
+
+function logCODAPAction(message, args) {
+  doCommand("logAction", { formatStr: message, replaceArgs: args });
+}
+
+function openCODAPTable() {
+  doCommand("createComponent", { type: "DG.TableView", log: false });
+}
+
+function clearCODAPData() {
+}
+
+if(window.parent && window.parent.DG) {
+  doCommand('initGame', {
+    name: "Ramp Game",
+    collections: [
+      { name: "Challenge",
+        attrs: [ { name: "Challenge", type: "numeric", description: "BB", precision: 1 },
+                 { name: "Step", type: "numeric", description: "BB", precision: 1 },
+                 { name: "Start Height", type: "numeric", description: "AA", precision: 0, units:"ppm" },
+                 { name: "Friction", type: "numeric", description: "BB", precision: 0 },
+                 { name: "Mass", type: "numeric", description: "BB", precision: 2 },
+                 { name: "End Distance", type: "numeric", description: "BB", precision: 0 } ],
+                 }
+               ]
+  });
+}
+
