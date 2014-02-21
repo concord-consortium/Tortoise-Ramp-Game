@@ -40,10 +40,10 @@ if(window.parent && window.parent.DG) {
       { name: "Challenge",
         attrs: [ { name: "Challenge", type: "numeric", description: "BB", precision: 1 },
                  { name: "Step", type: "numeric", description: "BB", precision: 1 },
-                 { name: "Start Height", type: "numeric", description: "AA", precision: 0, units:"ppm" },
-                 { name: "Friction", type: "numeric", description: "BB", precision: 0 },
+                 { name: "Start Height", type: "numeric", description: "AA", precision: 2, },
+                 { name: "Friction", type: "numeric", description: "BB", precision: 2 },
                  { name: "Mass", type: "numeric", description: "BB", precision: 2 },
-                 { name: "End Distance", type: "numeric", description: "BB", precision: 0 } ],
+                 { name: "End Distance", type: "numeric", description: "BB", precision: 2 } ],
                  }
                ]
   });
