@@ -84,8 +84,9 @@ function dataExportLogEvent(m, plist, unused1, unused2) {
 function dataExportClearLastRun() {
   clearCODAPData()
 }
-function dataExportUpdateRunSeries(a) {
-  record()
+function dataExportUpdateRunSeries(series) {
+  window.alert(series)
+  record(series)
 
 }
 function myUserMessage(msg) {
@@ -922,12 +923,7 @@ function setupDataExport() {
   var setup = Prims.list(computationalInputs, representationalInputs, computationalOutputs, studentInputs, modelInformation, timeSeriesData);
 }
 function updateRunSeries(endpoint) {
-  var computationalInputs = Prims.list(Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20));
-  var representationalInputs = [];
-  var computationalOutputs = Prims.list(endpoint);
-  var studentInputs = [];
-  var runSeriesData = Prims.list(computationalInputs, representationalInputs, computationalOutputs, studentInputs);
-  dataExportUpdateRunSeries(runSeriesData);
+  dataExportUpdateRunSeries(Prims.list(Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20), endpoint));
   dataExportLogEvent("User explorted the model.", createRunParameterList(endpoint), "", "");
 }
 function createRunParameterList(endpoint) {

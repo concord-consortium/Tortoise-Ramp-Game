@@ -7,31 +7,14 @@ function doCommand(action,args) {
   }
 }
 
-function record() {
+function record(series) {
   if(window.parent && window.parent.DG) {
     parentCase = doCommand('openCase', {
-          collection: "Run",
-          values: [
-            Prims.precision(Globals.getGlobal(6), 1),
-            Prims.precision(Globals.getGlobal(11), 1),
-            Globals.getGlobal(2),
-            Globals.getGlobal(0),
-            Globals.getGlobal(1),
-            Globals.getGlobal(3)
-          ]
-        });
+          collection: "Challenge",
+          values: series });
 
-        // Step 5. Create rows in the child table for each data point. Using 'createCases' we can
-        // do this inline, so we don't need to call openCase, closeCase for each row.
-        doCommand('createCases', {
-          collection: "Year",
-          values: yearlyData,
-          parent: parentCase.caseID
-        });
-
-        // Step 6. Close the case.
         doCommand('closeCase', {
-          collection: "Run",
+          collection: "Challenge",
           caseID: parentCase.caseID
         });
   } else {
@@ -64,5 +47,6 @@ if(window.parent && window.parent.DG) {
                  }
                ]
   });
+  openCODAPTable()
 }
 
