@@ -7,8 +7,6 @@
 ; This version is set up to log data
 ; It is a stripped down version of v5, with vast amounts of unneeded code and logic removed. 
 
-__includes [ "data-export-modular.nls" ]
-
 globals [
   messages-shown                 ; counts the number of messages shown at each level
   output-width                   ; the width of the output box--used in pretty-print
@@ -91,6 +89,41 @@ breed [markers marker]                ; used to show the target
 breed [cars car]
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;; Override Data Export Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to data-export-log-event [ a b c d ]
+end
+
+to data-export-clear-last-run
+end
+
+to data-export-update-run-series [ a ]
+end
+
+to data-export-initialize [ a ]
+end
+
+to my-every-dt
+ if running? [run-car]  ; computes the motion of the cars every dt seconds, if the simulation is running
+end
+
+to my-every-one
+  act-on-changes          ; detect changes in the friction slider
+  support-mouse           ; allows the mouse to move the car
+  tick
+end
+
+to my-user-message [ msg ]
+end
+
+to my-clear-output []
+end
+
+to-report my-user-yes-or-no? [ question ]
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;; End of preliminaries ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -110,12 +143,6 @@ to go                       ; this is the main forever button
     ask drawing-dots [die]  ; gets rid of the startup message
     set starting? false
     initialize]             ; initialize all the variables, setup the initial view
-  every dt [
-    if running? [run-car]]  ; computes the motion of the cars every dt seconds, if the simulation is running
-  every .1 [                ; do the following every tenth second
-    act-on-changes          ; detect changes in the friction slider
-    support-mouse           ; allows the mouse to move the car
-    tick]
 end
 
 
@@ -124,7 +151,7 @@ to act-on-changes
   if friction != old-friction [              ; if the user tries to change the friction...
     ifelse friction-locked? or running?      ;   and the friction slider is supposed to be locked or the model is running
       [ wait .6 set friction old-friction 
-        user-message "The friction is locked for this challenge."
+        my-user-message "The friction is locked for this challenge."
         set friction old-friction  ]         ;   then reset the slider to its old position
       [set old-friction friction]]           ; otherwise allow the change
 end
@@ -194,7 +221,7 @@ to initialize
   set max-level 5   ; the number of levels in the game. Used to stop advancing beyond this level
   setup-game        ; setup for level 1 step 1
   show-target
-  clear-output
+  my-clear-output
   pretty-print "Challenge 1: Make the car stop in the middle of the red zone. Place the car on the ramp by clicking on it and dragging it."
   pretty-print "As you get better, the red target will get smaller."
   setup-data-export    ;;; used to define the structure of the exported data
@@ -248,11 +275,11 @@ to draw-ramp
   while [not empty? object][                ; repeat as long as there is a pair in object
     let pair-one first object
     set object bf object
-    connect pair-zero pair-one ramp-color magnification / 20 ; draw a line between pair-zero and pair-one
+    safe-connect pair-zero pair-one ramp-color magnification / 20 ; draw a line between pair-zero and pair-one
     set pair-zero pair-one ]
 end
 
-to connect [p0 p1 c wide]                   ; draws a line between p0 and p1
+to safe-connect [p0 p1 c wide]                   ; draws a line between p0 and p1
   ; uses drawing-dots to connect p0 to p1 with a line of color c and width wide
   ; p0 and p1 are in physical units. 
   let u0 mx * (first p0) + bx
@@ -323,7 +350,7 @@ end
   
 to crash
   set car-speed 0                              ; crash into the right-hand wall. 
-  clear-output
+  my-clear-output
   pretty-print "Oops, you crashed the car!!"
   set shape "crash"                            ; we want to make this obvious because the p-space graph shows a break for runs that result in crashes
   let old-size size                            ; save the size
@@ -339,7 +366,7 @@ to handle-run-end            ; This is called once when the car has not moved fo
   set final-position car-x
   set running? false         ; this stops the calculations and unlocks the sliders
   set ready-for-export? true ; require the next user action be analyzing the data
-  clear-output               ; erase previous instructions for the user
+  my-clear-output               ; erase previous instructions for the user
   pretty-print "You can now analyze your data. Press the 'Analyze Data' button."
 end
 
@@ -410,16 +437,16 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
 to setup-new-run
-  if not waiting-for-setup? [data-export:log-event "User tried to setup a new run before analyzing data." "" "" ""
+  if not waiting-for-setup? [data-export-log-event "User tried to setup a new run before analyzing data." "" "" ""
     stop]
   set waiting-for-setup? false
   set step next-step 
   set level next-level
   let endpoint 0
-  data-export:log-event "User set up a new run." (create-run-parameter-list endpoint) "" ""
+  data-export-log-event "User set up a new run." (create-run-parameter-list endpoint) "" ""
   set waiting-for-setup? false
   set waiting-for-start? true
-  clear-output
+  my-clear-output
   setup-game           ; sets up the various controls for this new step and level.
   show-target          ; shows the new target
   set time 0
@@ -434,7 +461,7 @@ to setup-new-run
     set car-speed 0]
   set running? false             ; the simulation is not running
   set old-running? false         ; used to trap the first cycle (probably redundant)
-  data-export:clear-last-run
+  data-export-clear-last-run
 ;  set waiting-for-setup? false  ; ignore this procedure if the next user action must be pressing the setup button
   show-target                    ; shows the target for this level and step
   pretty-print instructions 
@@ -461,24 +488,24 @@ end
 
 to start-run
   if waiting-for-setup? [
-    data-export:log-event "User tried to start before pressing 'setup'." "" "" ""
+    data-export-log-event "User tried to start before pressing 'setup'." "" "" ""
     stop]  ; ignore this procedure if the next user action must be pressing the setup button
   if not waiting-for-start? [stop]
-  if running? [data-export:log-event "User tried to start while running." "" "" ""
+  if running? [data-export-log-event "User tried to start while running." "" "" ""
     stop]            ; ignore if running
   if car-x >= 0 [
     pretty-print "Place the car on the ramp." 
-    data-export:log-event "User tried to start with car on the level floor." "" "" ""
+    data-export-log-event "User tried to start with car on the level floor." "" "" ""
     stop ] ; if the car is not on the ramp, stop
   if not data-saved? [
-    if user-yes-or-no? "If you run now, you will lose data. Press the 'Analyze data' button to save your data." [stop]]
+    if my-user-yes-or-no? "If you run now, you will lose data. Press the 'Analyze data' button to save your data." [stop]]
   set data-saved? false
   set waiting-for-start? false
   set ready-for-export? false
   set car-speed 0
   let endpoint 0
   set endpoint precision car-x 2
-  data-export:log-event (word "User started the model with the following level and step: " level " " step ".") (create-run-parameter-list endpoint) "" ""
+  data-export-log-event (word "User started the model with the following level and step: " level " " step ".") (create-run-parameter-list endpoint) "" ""
   set running? true
   set time 0
 end
@@ -491,12 +518,12 @@ to get-next-step    ; determines whether the student stays at this step, goes up
    let lower-break max-score / 4  ; the minimum score to stay at this step
 
    if score-last-run > upper-break [  ; if the user did well
-     clear-output
+     my-clear-output
      pretty-print (word "Congratulations! You earned " score-last-run " points! You advance a step and the target gets smaller.")
      set next-step step + 1
      if next-step > n-steps [   ; if the user has completed all the steps in this level
        if level < max-level [           ; if this isn't the last level
-         clear-output           ; overwrite the 'advance step' message
+         my-clear-output           ; overwrite the 'advance step' message
          pretty-print (word "Congratulations! You earned " score-last-run " points! You advance to a new challenge!!")
          pretty-print "Before going on, please open your lab notebook and record what you learned in this challenge."
          set freeze? true       ; freeze the game for a bit to force the user to use notebook
@@ -505,7 +532,7 @@ to get-next-step    ; determines whether the student stays at this step, goes up
        if next-level >= max-level [          ; if the student is on the last level, keep at the highest step.  ; 
          set next-level max-level set next-step n-steps 
          if first-reward? [     ; say the following once only. More razmataz would be good.  
-           clear-output         ; overwrite previous message
+           my-clear-output         ; overwrite previous message
            pretty-print (word "Incredible!! You have completed the hardest challenge. You are a winner." )
            pretty-print "You can contine to earn points in this challenge, but first, jot down what you learned in your lab notebook."
            set first-reward? false
@@ -514,13 +541,13 @@ to get-next-step    ; determines whether the student stays at this step, goes up
      stop]
    
    if score-last-run > lower-break [      ; if the user did moderately well....
-     clear-output
+     my-clear-output
      pretty-print (word "OK! You earned " score-last-run " points. Try again.")
      pretty-print (word "You have to get " round upper-break " points to advance.")
      stop]
    
    if score-last-run <  lower-break [     ; if the user did poorly
-     clear-output
+     my-clear-output
      let m (word "Not so good. You score " score-last-run " points.")
      if step > 1 [set m (word m " Since your score was less than " round lower-break " you now get a easier target." )]
      pretty-print m
@@ -685,8 +712,8 @@ to update-score  ; called once by analyze-data
       if total-score < 0 [set total-score 0 ]] 
     ]
     
-  data-export:log-event (word "User score: " score-last-run ".") "" "" ""
-  data-export:log-event (word "User max score:" max-score ".") "" "" ""
+  data-export-log-event (word "User score: " score-last-run ".") "" "" ""
+  data-export-log-event (word "User max score:" max-score ".") "" "" ""
 end             
 
 to display-help-message 
@@ -765,8 +792,8 @@ to display-help-message
   pretty-print m         ; prints within the output box without breaking words. 
   ; update the messages-shown list (useful for logging)
   set messages-shown replace-item (level - 1) messages-shown (number-shown-already + 1)
-  set number-of-hints reduce + messages-shown
-  data-export:log-event (word "User received the message " m) "" "" ""
+  ; set number-of-hints reduce + messages-shown
+  data-export-log-event (word "User received the message " m) "" "" ""
 end
 
 to-report score-display
@@ -776,9 +803,9 @@ to-report score-display
 end
 
 to analyze-data ;
-  if not ready-for-export? [data-export:log-event "User tried to analyze data before a run." "" "" ""
+  if not ready-for-export? [data-export-log-event "User tried to analyze data before a run." "" "" ""
     stop]    
-  clear-output
+  my-clear-output
   capture-final-state
   update-score         ; computes and displays the score  
   get-next-step        ; computes next-step and next-level and prints result, but doesn't display the new level/step
@@ -854,7 +881,7 @@ to setup-data-export
 ;    [ "Speed" "m/s" -10 10 ]
     ]
   let setup (list computational-inputs representational-inputs computational-outputs student-inputs model-information time-series-data)
-  data-export:initialize setup
+  data-export-initialize setup
 end
 
 
@@ -870,8 +897,8 @@ to update-run-series [endpoint]
   let computational-outputs   ( list endpoint )
   let student-inputs          []
   let run-series-data ( list computational-inputs representational-inputs computational-outputs student-inputs )
-  data-export:update-run-series run-series-data
-  data-export:log-event "User explorted the model." (create-run-parameter-list endpoint) "" ""
+  data-export-update-run-series run-series-data
+  data-export-log-event "User explorted the model." (create-run-parameter-list endpoint) "" ""
 end
 
 to-report create-run-parameter-list [endpoint]
@@ -887,7 +914,7 @@ end
 ;;;
 
 ;to update-data-series 
-;  data-export:update-data-series data-series
+;  data-export-update-data-series data-series
 ;end
 
 ;;;
@@ -897,22 +924,22 @@ end
 ;;;
 
 ;;;;to update-inquiry-summary
-;;;;  data-export:update-inquiry-summary []
+;;;;  data-export-update-inquiry-summary []
 ;;;;end
 
 ;;;
 ;;; To test in NetLogo:
 ;;;
 ;;;
-;;; After running the model call the method data-export:make-model-data:
+;;; After running the model call the method data-export-make-model-data:
 ;;; 
-;;;   data-export:make-model-data
+;;;   data-export-make-model-data
 ;;;
-;;; This will update the global variable: data-export:model-data
+;;; This will update the global variable: data-export-model-data
 ;;;
-;;; Now print data-export:model-data which contains the JSON data available for export:
+;;; Now print data-export-model-data which contains the JSON data available for export:
 ;;;
-;;;   data-export:make-model-data print data-export:model-data
+;;;   data-export-make-model-data print data-export-model-data
 ;;;
 ;;;
 ;;; end of data-export methods
@@ -1027,7 +1054,7 @@ MONITOR
 227
 55
 Height above Floor
-word precision Height 2 \" m\"
+word precision Height 2 " m"
 17
 1
 11
@@ -1038,7 +1065,7 @@ MONITOR
 351
 55
 Distance to the right
-word precision car-x 2 \" m\"
+word precision car-x 2 " m"
 17
 1
 11
@@ -1071,7 +1098,7 @@ MONITOR
 102
 472
 Challenge
-(word Level \" of \" max-level)
+(word Level " of " max-level)
 17
 1
 12
@@ -1082,7 +1109,7 @@ MONITOR
 211
 472
 Step
-(word Step \" of \" n-steps)
+(word Step " of " n-steps)
 17
 1
 12
@@ -1110,7 +1137,7 @@ MONITOR
 446
 55
 Car Mass
-word car-mass \" g\"
+word car-mass " g"
 17
 1
 11
