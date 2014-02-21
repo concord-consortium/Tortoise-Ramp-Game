@@ -85,9 +85,7 @@ function dataExportClearLastRun() {
   clearCODAPData()
 }
 function dataExportUpdateRunSeries(series) {
-  window.alert(series)
   record(series)
-
 }
 function myUserMessage(msg) {
   window.alert(msg)
