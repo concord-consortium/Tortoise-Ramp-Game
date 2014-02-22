@@ -3197,7 +3197,7 @@ defaultShapes = {
       this.turtleView.canvas.style.position = 'absolute';
       this.turtleView.canvas.style.top = '0px';
       this.turtleView.canvas.style.left = '0px';
-      this.turtleView.canvas.style['z-index'] = 1;
+      this.turtleView.canvas.style['z-index'] = 3;
       this.patchView.canvas.style['z-index'] = 0;
       this.layers.appendChild(this.spotlightView.canvas);
       this.layers.appendChild(this.patchView.canvas);
@@ -3598,6 +3598,7 @@ defaultShapes = {
           button = document.createElement('button');
           button.style.position = "absolute";
           button.style.fontSize = "8pt";
+          button.style.zIndex = 5;
           _this.setDimensions(button, left, top, right, bottom);
           session.container.appendChild(button);
         }
@@ -3614,7 +3615,7 @@ defaultShapes = {
             }
           }));
         } else {
-          return button.onclick = code;
+          button.addEventListener('click', code);
         }
       }));
     },
@@ -3638,6 +3639,7 @@ defaultShapes = {
           valueLabel.innerHTML = def;
           valueLabel.style.cssFloat = "right";
           input = document.createElement('input');
+          slider.style.zIndex = 5;
           input.type = "range";
           if (typeof max !== 'number') {
             input.max = max();
@@ -3684,7 +3686,7 @@ defaultShapes = {
           input.value = besetter()
           valueLabel.innerHTML = input.value;
         }));
-        return input.onchange = update;
+        input.addEventListener('change', update);
       }));
     },
     addSwitch: function(display, left, top, right, bottom, setter) {
