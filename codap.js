@@ -47,6 +47,4 @@ if(window.parent && window.parent.DG) {
                  }
                ]
   });
-  openCODAPTable()
 }
-
