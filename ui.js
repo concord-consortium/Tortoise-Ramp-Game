@@ -1,7 +1,7 @@
 Widgets.addView(10, 28, 643, 475)
 Widgets.addButton("Setup New Run", 114, 253, 211, 287, function() { setupNewRun(); }, false)
 Widgets.addButton("Start", 16, 219, 211, 253, function() { startRun(); }, false)
-Widgets.addSlider("Friction", 15, 298, 211, 331,function(newVal) {Globals.setGlobal(0, newVal);}, function() {Globals.getGlobal(0);}, 0, .4, 0.18, .005)
+Widgets.addSlider("Friction", 15, 298, 211, 331,function(newVal) {Globals.setGlobal(0, newVal);}, function() { return Globals.getGlobal(0);}, 0, .4, 0.18, .005)
 Widgets.addMonitor("Height above Floor", 111, 10, 227, 55, function() { return (Dump("") + Dump(Prims.precision(Globals.getGlobal(31), 2)) + Dump(" m"))})
 Widgets.addMonitor("Distance to the right", 226, 10, 351, 55, function() { return (Dump("") + Dump(Prims.precision(Globals.getGlobal(23), 2)) + Dump(" m"))})
 Widgets.addMonitor("Total Score", 18, 375, 103, 424, function() { return Globals.getGlobal(40)})
@@ -66,9 +66,3 @@ function goForever() {
 }
 startup()
 goForever()
-
-//changes = function() {
-//  myEveryOne()
-//  setTimeout(changes, 200)
-//}
-//changes()
