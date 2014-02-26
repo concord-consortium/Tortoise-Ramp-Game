@@ -340,7 +340,7 @@ function runCar() {
   if ((Globals.getGlobal(12) && !(Globals.getGlobal(15)))) {
     Globals.setGlobal(15, true);
     Globals.setGlobal(35, Globals.getGlobal(23));
-    Globals.setGlobal(34, Prims.precision(Globals.getGlobal(31), 2));
+    Globals.setGlobal(34, Prims.precision(Globals.getGlobal(31), 5));
   }
   Globals.setGlobal(29, (Globals.getGlobal(29) + Globals.getGlobal(30)));
   AgentSet.ask(world.turtlesOfBreed("CARS"), true, function() {
@@ -357,9 +357,8 @@ function runCar() {
     else {
       a = (Globals.getGlobal(28) * (sh + (f * ch)));
     }
-    var midSpeed = (Globals.getGlobal(25) + ((0.5 * a) * Globals.getGlobal(30)));
-    Globals.setGlobal(23, (Globals.getGlobal(23) + ((midSpeed * ch) * Globals.getGlobal(30))));
-    Globals.setGlobal(25, (midSpeed + ((0.5 * a) * Globals.getGlobal(30))));
+    Globals.setGlobal(23, (Globals.getGlobal(23) + Globals.getGlobal(25) * Globals.getGlobal(30) + .5 * a * Globals.getGlobal(30) * Globals.getGlobal(30)));
+    Globals.setGlobal(25, (Globals.getGlobal(25) + (a * Globals.getGlobal(30))));
     if ((Globals.getGlobal(23) > 4.3)) {
       crash();
     }
@@ -403,7 +402,7 @@ function captureFinalState() {
     Globals.setGlobal(15, false);
     Globals.setGlobal(13, true);
     AgentSet.ask(world.turtlesOfBreed("CARS"), true, function() {
-      updateRunSeries(Prims.precision(Globals.getGlobal(68), 2));
+      updateRunSeries(Prims.precision(Globals.getGlobal(68), 5));
     });
   }
 }
@@ -554,7 +553,7 @@ function startRun() {
   Globals.setGlobal(13, false);
   Globals.setGlobal(25, 0);
   var endpoint = 0;
-  endpoint = Prims.precision(Globals.getGlobal(23), 2);
+  endpoint = Prims.precision(Globals.getGlobal(23), 5);
   dataExportLogEvent((Dump("") + Dump("User started the model with the following level and step: ") + Dump(Globals.getGlobal(42)) + Dump(" ") + Dump(Globals.getGlobal(43)) + Dump(".")), createRunParameterList(endpoint), "", "");
   Globals.setGlobal(12, true);
   Globals.setGlobal(29, 0);
@@ -921,6 +920,7 @@ function setupDataExport() {
   var setup = Prims.list(computationalInputs, representationalInputs, computationalOutputs, studentInputs, modelInformation, timeSeriesData);
 }
 function updateRunSeries(endpoint) {
+  window.alert(Globals.getGlobal(34))
   dataExportUpdateRunSeries(Prims.list(Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20), endpoint));
   dataExportLogEvent("User explorted the model.", createRunParameterList(endpoint), "", "");
 }

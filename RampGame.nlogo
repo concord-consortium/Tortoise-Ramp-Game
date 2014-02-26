@@ -334,9 +334,9 @@ to run-car
     ifelse car-speed > 0 
         [set a g * ( sh  - f * ch) ]               ; the acceleration to the right if the car is moving to the right
         [set a g * ( sh  + f * ch) ]               ; the acceleration to the right if the car is moving left
-    let mid-speed car-speed + .5 * a * dt          ; estimate the speed mid-interval
-    set car-x car-x + mid-speed * ch * dt          ; use the mid-interval speed to get the final x-value
-    set car-speed mid-speed + .5 * a * dt          ; update the speed
+
+    set car-x car-x + car-speed * dt + a * a * .5 * dt
+    set car-speed car-speed + a * dt
     
     if car-x > 4.3 [ crash ]                       ; check whether the car reaches the right-hand edge. 
   
