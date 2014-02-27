@@ -104,16 +104,6 @@ end
 to data-export-initialize [ a ]
 end
 
-to my-every-dt
- if running? [run-car]  ; computes the motion of the cars every dt seconds, if the simulation is running
-end
-
-to my-every-one
-  act-on-changes          ; detect changes in the friction slider
-  support-mouse           ; allows the mouse to move the car
-  tick
-end
-
 to my-user-message [ msg ]
 end
 
@@ -143,6 +133,16 @@ to go                       ; this is the main forever button
     ask drawing-dots [die]  ; gets rid of the startup message
     set starting? false
     initialize]             ; initialize all the variables, setup the initial view
+  every dt [
+    if running? [run-car]  ; computes the motion of the cars every dt seconds, if the simulation is running
+  ]
+
+  every .1 [
+    act-on-changes          ; detect changes in the friction slider
+    support-mouse           ; allows the mouse to move the car
+    tick
+  ]
+
 end
 
 
