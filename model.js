@@ -274,7 +274,7 @@ function supportMouse() {
   if (!(inWindow_p(session.controller.mouseXcor, session.controller.mouseYcor))) {
     return;
   }
-  if (Globals.getGlobal(26)) {
+  if (Globals.getGlobal(26) || Globals.getGlobal(12)) {
     return;
   }
   if (session.controller.mouseDown && session.controller.mouseInside) {
