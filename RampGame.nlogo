@@ -253,7 +253,7 @@ end
 
 to support-mouse
   if not in-window? mouse-xcor mouse-ycor [stop] ; do nothing if the mouse is outside the ramp window
-  if (car-locked? or running?) [stop]                          ; if the car is locked, do nothing
+  if (car-locked? or running? or waiting-for-setup? or ready-for-export?) [stop] ; if the car is locked, do nothing
     ; set car-x to the transform of the mouse's xcor, set car-y to be on the ramp for that x value
   if mouse-down? [ask cars [
       place-car ((mouse-xcor - bx) / mx)] ]       ; place the car on the track at the mouse x-coordinate
