@@ -179,7 +179,7 @@ function initialize() {
   Globals.setGlobal(27, false);
   Globals.setGlobal(39, 50);
   Globals.setGlobal(28, 9.81);
-  Globals.setGlobal(30, 0.020);
+  Globals.setGlobal(30, 1 / calculationRefreshPerSecond);
   Globals.setGlobal(37, 1.34);
   Globals.setGlobal(38, 0.3);
   defineWindow();

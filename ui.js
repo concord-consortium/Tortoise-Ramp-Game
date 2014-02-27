@@ -46,23 +46,20 @@ function updateTickCounter() {
   }
 }
 
+var lastVisualRefresh = 0
 function goForever() {
+  go()
 
-  var speed      = Math.exp(document.getElementById('speed-slider').value);
-  var delta      = Math.min(new Date().getTime() - lastUpdate, 30);
-  var numUpdates = speed * delta / 1000 + 1;
-
-  for (var i=0; i < numUpdates; i++) {
+  var now = Date.now()
+  if (now > (lastVisualRefresh + 1000 / visualRefreshPerSecond)) {
     Widgets.runUpdateFuncs()
-    go()
+    updateTickCounter();
+    session.update(collectUpdates());
+    lastVisualRefresh = now
   }
 
-  updateTickCounter();
-  session.update(collectUpdates());
-
   lastUpdate = new Date().getTime();
-  runner     = setTimeout(goForever, 1000 / speed);
-
+  runner     = setTimeout(goForever, 1000 / calculationRefreshPerSecond);
 }
 startup()
 goForever()
