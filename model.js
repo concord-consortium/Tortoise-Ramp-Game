@@ -189,7 +189,7 @@ function initialize() {
   Globals.setGlobal(16, [[-1.3, 1], [0, 0], [0.5, 0], [1, 0], [1.5, 0], [2, 0], [2.5, 0], [3, 0], [3.5, 0], [4, 0], [5, 0]]);
   drawRamp();
   Globals.setGlobal(21, 12);
-  Globals.setGlobal(35, -1);
+  Globals.setGlobal(35, -.9);
   Globals.setGlobal(22, 22);
   AgentSet.ask(world.createTurtles(1, "CARS"), true, function() {
     AgentSet.self().hideTurtle(true);;
@@ -627,8 +627,8 @@ function setupGameLevel() {
     Globals.setGlobal(48, true);
     Globals.setGlobal(49, false);
     Globals.setGlobal(26, false);
-    Globals.setGlobal(53, -1);
-    Globals.setGlobal(52, -1);
+    Globals.setGlobal(53, -.9);
+    Globals.setGlobal(52, -.9);
     Globals.setGlobal(55, 3);
     Globals.setGlobal(57, 0.6);
     Globals.setGlobal(58, 0.2);
@@ -647,8 +647,8 @@ function setupGameLevel() {
     Globals.setGlobal(49, false);
     Globals.setGlobal(55, 4);
     Globals.setGlobal(26, false);
-    Globals.setGlobal(53, -1);
-    Globals.setGlobal(52, -1);
+    Globals.setGlobal(53, -.9);
+    Globals.setGlobal(52, -.9);
     Globals.setGlobal(57, 0.5);
     Globals.setGlobal(58, 0.2);
     Globals.setGlobal(60, Prims.item((Globals.getGlobal(43) - 1), [2.5, 1.3, 3.8, 2, 3.1]));
@@ -665,8 +665,8 @@ function setupGameLevel() {
     Globals.setGlobal(49, false);
     Globals.setGlobal(26, false);
     Globals.setGlobal(55, 4);
-    Globals.setGlobal(53, -1);
-    Globals.setGlobal(52, -1);
+    Globals.setGlobal(53, -.9);
+    Globals.setGlobal(52, -.9);
     Globals.setGlobal(57, 0.5);
     Globals.setGlobal(58, 0.25);
     Globals.setGlobal(60, Prims.item((Globals.getGlobal(43) - 1), [2.1, 3.9, 0.6, 3.2]));
