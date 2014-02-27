@@ -188,7 +188,7 @@ to initialize
   draw-ramp                      ; draws ramp
   ; define car variables
   set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
-  set saved-starting-x -1
+  set saved-starting-x -.9
   ;  make the car
   set car-size 22
   create-cars 1 [
@@ -574,8 +574,8 @@ to setup-game-level ; setup the game for the current level.
     set friction-locked? true
     set starting-position-locked? false
     set car-locked? false
-    set starting-position-max -1
-    set starting-position-min -1
+    set starting-position-max -.9
+    set starting-position-min -.9
     set n-steps  3   
     set target-radius-max .6 ; the distance between the center and edge of the target for step 1
     set target-radius-min .2 ; the distance for the highest step in this level
@@ -593,8 +593,8 @@ to setup-game-level ; setup the game for the current level.
     set starting-position-locked? false
     set n-steps  4
     set car-locked? false
-    set starting-position-max -1
-    set starting-position-min -1
+    set starting-position-max -.9
+    set starting-position-min -.9
     set target-radius-max .5 ; the distance between the center and edge of the target for step 1
     set target-radius-min .2 ; the distance for the highest step in this level
     set target-max item (step - 1) [2.5 1.3 3.8 2 3.1]  ; move the target to predetermined places
@@ -609,8 +609,8 @@ to setup-game-level ; setup the game for the current level.
     set starting-position-locked? false    
     set car-locked? false
     set n-steps  4
-    set starting-position-max -1
-    set starting-position-min -1
+    set starting-position-max -.9
+    set starting-position-min -.9
     set target-radius-max .5 ; the distance between the center and edge of the target for step 1
     set target-radius-min .25 ; the distance for the highest step in this level
     set target-max item (step - 1) [2.1 3.9 .6 3.2]  ; move the target to predetermined places
