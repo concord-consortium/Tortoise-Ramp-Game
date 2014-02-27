@@ -2,7 +2,12 @@
 
 <html>
   <head>
-    <script>useGoogleGraph = false</script>
+    <script>useGoogleGraph = false
+      // This affects how often screen updates are collected and worked through in hertz
+      var visualRefreshPerSecond = 30;
+      // This affects how tight the calculation loop is in hertz
+      var calculationRefreshPerSecond = 50;
+    </script>
     <!--
     Uncomment if you'd like to use google graphs!
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
