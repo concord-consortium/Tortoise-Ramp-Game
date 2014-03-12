@@ -397,6 +397,7 @@ function handleRunEnd() {
   Globals.setGlobal(13, true);
   myClearOutput();
   prettyPrint("You can now analyze your data. Press the 'Analyze Data' button.");
+  analyzeButton.disabled = false;
 }
 function captureFinalState() {
   if ((!(Globals.getGlobal(11)) && !(Globals.getGlobal(12)))) {
@@ -528,6 +529,8 @@ function showTarget() {
   });
 }
 function startRun() {
+  startButton.disabled = true;
+  frictionSlider.disabled = true;
   if (Globals.getGlobal(66)) {
     dataExportLogEvent("User tried to start before pressing 'setup'.", "", "", "");
     return;
@@ -560,6 +563,7 @@ function startRun() {
   Globals.setGlobal(29, 0);
 }
 function getNextStep() {
+  setupButton.disabled = false;
   var upperBreak = ((2 * Globals.getGlobal(54)) / 3);
   var lowerBreak = (Globals.getGlobal(54) / 4);
   if ((Globals.getGlobal(41) > upperBreak)) {
@@ -714,6 +718,10 @@ function setupGameLevel() {
     }
     Globals.setGlobal(61, (Globals.getGlobal(60) - 0.3));
   }
+  setupButton.disabled = true;
+  analyzeButton.disabled = true;
+  startButton.disabled = false;
+  frictionSlider.disabled = Globals.getGlobal(48);
 }
 function setupGameStep() {
   Globals.setGlobal(56, randomBetween(Globals.getGlobal(60), Globals.getGlobal(61)));
@@ -910,6 +918,8 @@ function analyzeData() {
   Globals.setGlobal(13, false);
   Globals.setGlobal(36, true);
   Globals.setGlobal(66, true);
+  analyzeButton.disabled = true;
+  setupNewRun.disabled = false;
 }
 function setupDataExport() {
   var computationalInputs = [["Challenge", "", 1, 5, true], ["Step", "", 1, 8, true], ["Start height", "m", 0, 1.5, true], ["Friction", "", 0, 0.3, true], ["Mass", "g", 100, 200, true]];

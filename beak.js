@@ -3617,6 +3617,7 @@ defaultShapes = {
         } else {
           button.addEventListener('click', code);
         }
+        return button;
       }));
     },
     addSlider: function(display, left, top, right, bottom, setter, besetter, min, max, def, step) {
@@ -3681,12 +3682,12 @@ defaultShapes = {
           return setter(input.value);
         };
         input.value = def;
-        input.oninput = update;
-        return _this.widgetUpdateFuncs.push((function() {
+        _this.widgetUpdateFuncs.push((function() {
           input.value = besetter()
           valueLabel.innerHTML = input.value;
         }));
-        input.addEventListener('change', update);
+        input.addEventListener('input', update);
+        return input;
       }));
     },
     addSwitch: function(display, left, top, right, bottom, setter) {
