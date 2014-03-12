@@ -721,6 +721,7 @@ function setupGameLevel() {
   setupButton.disabled = true;
   analyzeButton.disabled = true;
   startButton.disabled = false;
+  frictionSlider.style.display = Globals.getGlobal(48) ? "none" : "inline";
   frictionSlider.disabled = Globals.getGlobal(48);
 }
 function setupGameStep() {
