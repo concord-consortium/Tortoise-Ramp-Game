@@ -3597,7 +3597,7 @@ defaultShapes = {
         if (button === void 0) {
           button = document.createElement('button');
           button.style.position = "absolute";
-          button.style.fontSize = "8pt";
+          button.style.fontSize = "10pt";
           button.style.zIndex = 5;
           _this.setDimensions(button, left, top, right, bottom);
           session.container.appendChild(button);
@@ -3634,8 +3634,9 @@ defaultShapes = {
         if (input === void 0) {
           slider = document.createElement('div');
           slider.style.position = "absolute";
-          slider.style.fontSize = "8pt";
-          _this.setDimensions(slider, left, top, right, bottom);
+          slider.style.fontSize = "10pt";
+          slider.style.fontFamily = "sans-serif";
+            _this.setDimensions(slider, left, top, right, bottom);
           valueLabel = document.createElement('div');
           valueLabel.innerHTML = def;
           valueLabel.style.cssFloat = "right";
@@ -3734,8 +3735,9 @@ defaultShapes = {
         if (value === void 0) {
           monitor = document.createElement('div');
           monitor.style.position = "absolute";
-          monitor.style.fontSize = "8pt";
-          monitor.style.backgroundColor = "#CCCCCC";
+          monitor.style.fontSize = "10pt";
+          monitor.style.backgroundColor = "#c2edcb";
+          monitor.style.fontFamily = "sans-serif";
           _this.setDimensions(monitor, left, top, right, bottom);
           heading = document.createElement('div');
           heading.style.margin = 4;
