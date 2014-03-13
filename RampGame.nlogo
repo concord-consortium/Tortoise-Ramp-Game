@@ -1,9 +1,14 @@
-; RampGame v6
-; Feb 1, 2014
+; RampGame v6c
+; March 11, 2014
 ; Started July 22, 2013
 ; Bob Tinker
 ; Copyright, the Concord Consortium
+; Available under open source licenses
 
+;; Closed solutions to the motion are provided to speed up the calculations.
+;; The calculation starts by rounding the starting location--this eliminates noise
+;; Also added a target location readout. 
+;; Random variations of the target positions are eliminated in favor of many more fixed locations. 
 ; This version is set up to log data
 ; It is a stripped down version of v5, with vast amounts of unneeded code and logic removed. 
 
@@ -31,16 +36,13 @@ globals [
   car-speed
   car-locked?
   freeze?   ; used to freeze the game to push kids to use the lab notebook. 
-;  move-ramp-left?   ; set true when the car runs off one side or the other
-;  move-ramp-right?
-;  y-axis
-;  old-y-axis
+
   g        ; acceleration of gravity 9.81 m/s^2
   time     ; the model time
   dt       ; the time step
   height dist
   saved-time-series ; a list of lists containing [t, x, y, speed] for every .5 sec
-  start-height  ;
+  start-height
   saved-starting-x
   data-saved?
   
@@ -54,7 +56,7 @@ globals [
   step                  ; the current step in the current level
   loops-at-zero         ; the number of times go is called when speed is zero before the program stops
   countdown             ; used to record the times waited, starting at loops-at-zero  
-  instructions            ; text 
+  instructions          ; text 
   number-of-hints
   friction-locked?
   starting-position-locked?
@@ -65,8 +67,8 @@ globals [
   max-score             ; the maximum score a user could earn for the current level
   n-steps               ; the number of steps in the current level
   target                ; the target location for the current step and level
-  target-radius-max     ; the maximum radius at this step, corresponding to step 1
-  target-radius-min     ; the minimum radius at this step, correspondind to step n-steps
+  target-radius-max     ; the radius for setp one in a run
+  target-radius-min     ; the radius for the highest step in a run
   target-radius         ; the radius for this level and step
   target-max            ; the maximum position of the target 
   target-min            ; the minimum position of the target
@@ -81,6 +83,21 @@ globals [
   next-level            ; ditto for level
   number-of-random-tries; used to detect whether a student is making random tries
   first-reward?         ; used so that the congratulations for finishing occurs only once. 
+
+  move-target?          ; Move the target for the next step? Depends on whether a step is being repeated.
+  target-locked?        ; is the target allowed to move at all during one challege   
+  target-index          ; the index of the current target into a list of targets 
+  target-label          ; the who of the drawing dot used to label the target 
+  targets               ; a list of target values
+  advance-target?       ; used to determine whether the target moves between trials. 
+  
+  ; the following variables need to be calculated only once each dt cycle, speeding up the calculations.
+  t1                             ; the time the car hits the bottom of the ramp
+  t2                             ; the time at which the car comes to rest
+  v-leaving-ramp                 ; the velocity of the car at the bottom of the ramp
+  const1                         ; the multiplier of t-squared in the equation for position on the ramp
+  const2                         ; ditto on the floor
+  
 ]
 
 breed [drawing-dots drawing-dot]      ; used for the track
@@ -108,6 +125,7 @@ to my-user-message [ msg ]
 end
 
 to my-clear-output []
+  clear-output
 end
 
 to-report my-user-yes-or-no? [ question ]
@@ -134,17 +152,13 @@ to go                       ; this is the main forever button
     set starting? false
     initialize]             ; initialize all the variables, setup the initial view
   every dt [
-    if running? [run-car]  ; computes the motion of the cars every dt seconds, if the simulation is running
-  ]
-
-  every .1 [
+    if running? [run-car]   ; computes the motion of the car every dt seconds, if the simulation is running
     act-on-changes          ; detect changes in the friction slider
     support-mouse           ; allows the mouse to move the car
     tick
   ]
 
 end
-
 
 to act-on-changes
   if freeze? [wait 5 set freeze? false]      ; freezes the game for 5 sec. 
@@ -157,7 +171,7 @@ to act-on-changes
 end
 
 to draw-first-page
-  ask patches [set pcolor grey + 2]
+;  ask patches [set pcolor grey + 2]
   create-drawing-dots 1 [
     set size .1
     setxy .4 * min-pxcor .9 * max-pycor
@@ -170,21 +184,20 @@ to draw-first-page
 end
 
 to initialize
+  set dt .01 ; the time step
+  set g 9.81 ; acceleration of gravity in mks units
   set ready-for-export? false
   set waiting-for-start? true
   set running? false
   set old-running? false
   set freeze? false
   set magnification 50    ; 
-  
-  set g 9.81 ; acceleration of gravity
-  set dt .001 ; the time step
   set x-center 1.34 set y-center .3  ; 
   define-window      ; defines the ramp window bounded by (ul, ur, vb, bt)
   define-transforms  ; creates transforms for the ramp  (mx, my, bx, by)
   set first-reward? true
   set ramp-color blue + 2
-  set ramp [[-1.3 1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
+  set ramp [[-1.6 1.1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
   draw-ramp                      ; draws ramp
   ; define car variables
   set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
@@ -200,19 +213,20 @@ to initialize
     place-car saved-starting-x]
 
   ; markers mark the target. They are two tiny turtles linked by a thick line
+  set move-target? false
   create-markers 1 [ht set marker-1 who set color red set size .1 set heading 0]
   create-markers 1 [ht set marker-2 who set color red set size .1 set heading 0
     create-link-with marker marker-1 [
       set thickness 3 set color red]]
   create-markers 1 [ht set marker-3 who set color red set size 18 set heading 0 set shape "line"]    ; create a vertical line at the center of the target
+  create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
   set data-saved? true
   set output-width  46     ; characters in the output box, used with pretty-print
   set total-score 0
   set score-last-run 0
   set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
+  set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25] ; a list of target values
 
-  set loops-at-zero int ( .3 / dt)  ; wait .3 sec before deciding that the car has stopped. 
-  set countdown loops-at-zero
   set number-of-random-tries 0
   set level 1       ; start at level 1 (subsequently, levels were renamed as challenges. 
   set step 1        ; start at step 1
@@ -291,7 +305,7 @@ to safe-connect [p0 p1 c wide]                   ; draws a line between p0 and p
   let w 0                       ; the who of the left point
   create-drawing-dots 1 [       ; create the left end of the line and show it as a tick mark
     set size .1 * magnification 
-    set shape "tick mark" set color black
+    set shape "tick mark" set color white
     set heading 0
     setxy u0 v0 
     set w who]
@@ -299,8 +313,8 @@ to safe-connect [p0 p1 c wide]                   ; draws a line between p0 and p
     let x0 (u0 - bx) / mx 
     if x0 >= 0 [        ; label only non-negative physical values--these are on the floor
       set size .1
-      set color yellow + 4.5  ; the same as the background
-      set label-color black
+      set color black + 4.5  ; the same as the background
+      set label-color white
       set label word (precision x0 2 ) " m"
       setxy u0 + 6 v0 - 6 ]] 
   create-drawing-dots 1 [     ; make the right end of the line--not a dot
@@ -316,7 +330,7 @@ end
 ;;;;;;;;;;;;;;  move the car  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to run-car
+to old-run-car
   ; using the starting position, move car forward only if running? is true
   if running? and not old-running? [   ; must be the first cycle 
     set old-running? true       
@@ -340,34 +354,84 @@ to run-car
     
     if car-x > 4.3 [ crash ]                       ; check whether the car reaches the right-hand edge. 
   
-    ifelse abs (car-speed) > .005                 ; stop the run if it is at rest for more than countdown intervals
-      [set countdown loops-at-zero]
-      [set countdown countdown - 1 ]
-    if countdown < 1 [
-      handle-run-end ]
+;    ifelse abs (car-speed) > .005                 ; stop the run if it is at rest for more than countdown intervals
+;      [set countdown loops-at-zero]
+;      [set countdown countdown - 1 ]
+;    if countdown < 1 [
+;      handle-run-end ]
     place-car car-x]
+end
+
+to run-car            ; calculate the position of the car
+                      ; calculates the position based on equations, rather than integreation. 
+                      ; designed to be called multiple times, the first time with old-running? false
+                      ; subsequent calls should be at intervals of dt
+  let a-ramp 1                              ; declare a-ramp--a local global
+  if running? and not old-running? [        ; must be the first cycle--
+    set old-running? true   
+    set time 0
+    set saved-starting-x precision car-x 2     
+    set start-height (precision height 2)   ; save the rounded starting height @@@ needed?
+    ; now compute a bunch of globals that will be used repeatedly in this run
+    let d0 sqrt ((car-x * car-x) + (car-y * car-y))  ; starting distance up the ramp measured diagonally in mks units
+;    show word "d0: " d0
+    let cos-theta 1  let sin-theta 0
+    if d0 != 0 [ 
+      set cos-theta abs car-x / d0                ; theta is the angle of the ramp
+      set sin-theta car-y / d0]
+;    show (word "sin " sin-theta "  cos " cos-theta)
+    set a-ramp g * (sin-theta - friction * cos-theta)        ; the acceleration to the right on the ramp
+;    show word "a-ramp " a-ramp
+    let a-floor 0 - g * friction
+;    show word "a-floor " a-floor
+    set t1 sqrt (2 * d0 / a-ramp)                 ; t1 is the time the car hits the bottom of the ramp. 
+                                                  ; (NB: a is positive, x0 is negative)
+    set v-leaving-ramp a-ramp * t1            ; the initial velocity on the floor
+    set const1 .5 * a-ramp * cos-theta            ; the multiplier of t^2 on the ramp
+    set const2 .5 * a-floor                       ; the multiplier of t^2 on the floor
+;    show (word "const1 " const1 "  const2 " const2)
+    set t2 t1 - v-leaving-ramp / a-floor 
+;    show (word "time " time "  t1 " t1 "  t2 " t2)
+;    show word "it should run to " ((abs car-y / friction ) - abs car-x)
+          ]
+  if time >= t2 [
+    handle-run-end "You can now analyze your data. Press the 'Analyze Data' button."
+    stop]
+  if a-ramp <= 0 [
+    handle-run-end "The car cannot move. Too much friction."] ; in this condition, the car does not move--too much friction   
+  if car-x < 0 [                          ; on the ramp (x=0 at the foot of the ramp)
+    set car-x saved-starting-x + const1 * time * time
+    set car-speed 2 * const1 * time ]      ; velocity here is the time derivative of x
+  if car-x >= 0 [                         ; here the car is on the floor
+    let time-floor time - t1              ; the elapsed time since the car left the ramp
+    set car-x time-floor * (v-leaving-ramp + const2 * time-floor)
+    set car-speed v-leaving-ramp + 2 * const2 * time-floor ]
+  if car-x > 4.3 [crash]                  ; check whether the car has reached the right-hand edge. 
+  place-car car-x                         ; move the car to the new position
+  set time time + dt 
 end
   
 to crash
   set car-speed 0                              ; crash into the right-hand wall. 
-  my-clear-output
-  pretty-print "Oops, you crashed the car!!"
-  set shape "crash"                            ; we want to make this obvious because the p-space graph shows a break for runs that result in crashes
-  let old-size size                            ; save the size
-  set size 20 
-  repeat 12 [wait .15 set size size + 10]
-  wait .5
-  set car-x 4.2
-  set shape "car"
-  set size old-size                            ; restore the size
+  handle-run-end "Oops, you crashed the car!!"
+  ask cars [
+    set shape "crash"                            ; we want to make this obvious because the p-space graph shows a break for runs that result in crashes
+    let old-size size                            ; save the size
+    set size 20 
+    repeat 12 [wait .15 set size size + 10]
+    wait .5
+    set car-x 4.2
+    set shape "car"
+    set size old-size   ]                         ; restore the size
 end
 
-to handle-run-end            ; This is called once when the car has not moved for a while, indicating that the run is over. Called by run-cars
+to handle-run-end [mess]           ; called when a run ends due to t>t2, crash, or too much friction. Displays mess(age)ss]
   set final-position car-x
-  set running? false         ; this stops the calculations and unlocks the sliders
-  set ready-for-export? true ; require the next user action be analyzing the data
-  my-clear-output               ; erase previous instructions for the user
-  pretty-print "You can now analyze your data. Press the 'Analyze Data' button."
+  set running? false               ; stops the calculations and unlocks the sliders
+  set old-running? false
+  set ready-for-export? true       ; require the next user action be analyzing the data
+  my-clear-output                  ; erase previous instructions for the user
+  pretty-print mess
 end
 
 to capture-final-state
@@ -384,18 +448,20 @@ end
 ;;;;;;;;;;;;;; put car on ramp ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to place-car [x]  ; in car context, puts the car on the track at x (in physical units)
+to place-car [x]  ; puts the car on the track at x (in physical units)
   let mult 1 if level = 4 [set mult 1.4]                 ; enlarge car in level 4
   let off-mult 1 if level = 4 [set off-mult 1.2]         ; offset the more in level 4
-  set size car-size * .01 * mult * magnification
   let old-offset car-offset
-  set car-offset off-mult * car-offset
-  set car-x x     ; update the variable car-x (needed in uv-of-car)
-  let loc uv-of-car       ; get the [u v] coordinates of the car and set its heading
-  let u first loc let v last loc
-  ifelse in-window? u v   ; if the car is in the window
-    [st setxy u v]        ; show it and place it
-    [ht]
+  ask cars [
+    set size car-size * .01 * mult * magnification 
+
+    set car-offset off-mult * car-offset
+    set car-x x     ; update the variable car-x (needed in uv-of-car)
+    let loc uv-of-car       ; get the [u v] coordinates of the car and set its heading
+    let u first loc let v last loc
+    ifelse in-window? u v   ; if the car is in the window
+      [st setxy u v]        ; show it and place it
+      [ht]]
   set car-offset old-offset ; restore the offset
 end
 
@@ -480,10 +546,14 @@ to show-target   ; draws the target for the current level and step.
     let u mx * (target + target-radius) + bx
     let v my * y + by + 3
     setxy u v st ]
-  ask marker marker-3 [         ; show a square indicator at the center of the target
+  ask marker marker-3 [         ; show a line indicator at the center of the target
     let u mx * target + bx
     let v my * y + by + 4.5
-    setxy u v st ]
+    setxy u v st 
+    ask drawing-dot target-label [
+      setxy u + 10 v + 14
+      set label word (precision target 2) " m" ]]
+    
 end
 
 to start-run
@@ -516,7 +586,7 @@ to get-next-step    ; determines whether the student stays at this step, goes up
                     ; but it does not actually report the new level and step--that happens in setup-next-run
    let upper-break 2 * max-score / 3  ; the minimum score to advance
    let lower-break max-score / 4  ; the minimum score to stay at this step
-
+   set move-target? true
    if score-last-run > upper-break [  ; if the user did well
      my-clear-output
      pretty-print (word "Congratulations! You earned " score-last-run " points! You advance a step and the target gets smaller.")
@@ -542,14 +612,16 @@ to get-next-step    ; determines whether the student stays at this step, goes up
    
    if score-last-run > lower-break [      ; if the user did moderately well....
      my-clear-output
+     set move-target? false
      pretty-print (word "OK! You earned " score-last-run " points. Try again.")
      pretty-print (word "You have to get " round upper-break " points to advance.")
      stop]
    
    if score-last-run <  lower-break [     ; if the user did poorly
+     set move-target? false
      my-clear-output
      let m (word "Not so good. You score " score-last-run " points.")
-     if step > 1 [set m (word m " Since your score was less than " round lower-break " you now get a easier target." )]
+     if step > 1 [set m (word m " Since your score was less than " round lower-break " you now get a larger target." )]
      pretty-print m
      set next-step step - 1 
      if step = 1 [set next-step 1]]
@@ -561,7 +633,8 @@ to setup-game     ; sets all the controls for the current level and step
 end
 
 to setup-game-level ; setup the game for the current level.
-  set max-score  100   ; the maximum score for one run for all levels
+  set max-score 100   ; the maximum score for one run for all levels
+  set target-locked? false  ; the default is that targets move between steps. set true for level 1 only
   if level = 1 [
     set instructions "Place the car where you want it to start."
     if step = 1 [
@@ -574,13 +647,11 @@ to setup-game-level ; setup the game for the current level.
     set friction-locked? true
     set starting-position-locked? false
     set car-locked? false
-    set starting-position-max -.9
-    set starting-position-min -.9
     set n-steps  3   
-    set target-radius-max .6 ; the distance between the center and edge of the target for step 1
-    set target-radius-min .2 ; the distance for the highest step in this level
-    set target-max 2.2    ; the target is placed at random between target-max and target-min
-    set target-min 2.2]   ; to defeat random placement of the target, set min to max. 
+    set target-radius-max .4   ; the distance between the center and edge of the target for step 1
+    set target-radius-min .15   ; the distance for the highest step in this level
+    set target-locked? true      ; don't move the target during this challenge
+    ]   
   
   if level = 2 [
     set instructions ""
@@ -593,12 +664,8 @@ to setup-game-level ; setup the game for the current level.
     set starting-position-locked? false
     set n-steps  4
     set car-locked? false
-    set starting-position-max -.9
-    set starting-position-min -.9
-    set target-radius-max .5 ; the distance between the center and edge of the target for step 1
-    set target-radius-min .2 ; the distance for the highest step in this level
-    set target-max item (step - 1) [2.5 1.3 3.8 2 3.1]  ; move the target to predetermined places
-    set target-min target-max - .5]   ; to defeat random placement of the target, set min to max. 
+    set target-radius-max .4 ; the distance between the center and edge of the target for step 1
+    set target-radius-min .15 ]; the distance for the highest step in this level
   
   if level = 3 [
     set instructions ""
@@ -609,12 +676,8 @@ to setup-game-level ; setup the game for the current level.
     set starting-position-locked? false    
     set car-locked? false
     set n-steps  4
-    set starting-position-max -.9
-    set starting-position-min -.9
-    set target-radius-max .5 ; the distance between the center and edge of the target for step 1
-    set target-radius-min .25 ; the distance for the highest step in this level
-    set target-max item (step - 1) [2.1 3.9 .6 3.2]  ; move the target to predetermined places
-    set target-min target-max - .2]   ; to defeat random placement of the target, set min to max. 
+    set target-radius-max .4 ; the distance between the center and edge of the target for step 1
+    set target-radius-min .2 ]; the distance for the highest step in this level
   
   if level = 4 [
     set instructions ""
@@ -629,10 +692,8 @@ to setup-game-level ; setup the game for the current level.
     set n-steps  3
     set starting-position-max -.8
     set starting-position-min -.8
-    set target-radius-max .5 ; the distance between the center and edge of the target for step 1
-    set target-radius-min .2 ; the distance for the highest step in this level
-    set target-max item (step - 1) [1.3 3.7 .5 3.2]  ; move the target to predetermined places
-    set target-min target-max - .2]   ; to defeat random placement of the target, set min to max. 
+    set target-radius-max .3 ; the distance between the center and edge of the target for step 1
+    set target-radius-min .13 ]; the distance for the highest step in this level
   
   if level = 5 [
     set instructions ""
@@ -640,24 +701,22 @@ to setup-game-level ; setup the game for the current level.
     set friction .18
     set car-mass 100
     set old-friction friction
-;    set air-friction .2
     set starting-position-locked? true    
     set friction-locked? false
     set car-locked? true
     set n-steps 6
-    set starting-position-max -.52
-    set starting-position-min -.52
-    set target-radius-max .5 ; the distance between the center and edge of the target for step 1
-    set target-radius-min .2 ; the distance for the highest step in this level
-    let tags [3.2 2.1 3.9 1.3 2.9 3.6 1.5 2.4 ]
-    set target-max item (step - 1) tags  ; move the target to predetermined places
-    if step = n-steps [set target-max one-of tags] ; if the user continues past the end, keep throwing items at random. 
-    set target-min target-max - .3]   ; to defeat random placement of the target, set min to max. 
+    set target-radius-max .4 ; the distance between the center and edge of the target for step 1
+    set target-radius-min .13] ; the radius for the highest step in this level
 end
 
 to setup-game-step   ; sets the values of controls that change with each step--the target and starting point widths
-  set target random-between target-max target-min
+  if move-target? and not target-locked? [ ; if the target can be moved this challenge and the user isn't repeating a try....
+    set target-index (target-index + 1) mod length targets ]  ; cycle through the various targets in the variable targets. 
+  set target item target-index targets                    ; pull a target out of the list of targets
+       ; the next statement shrinks the target from its maximum radius on step 1 to a minimum on the last step
   set target-radius target-radius-max + (target-radius-min - target-radius-max ) * (step - 1) / (n-steps - 1)
+  if target-radius + target > 4.3 [
+    set target-radius 4.3 - target ] ; make sure it doesn't run off the scale. 
 end
   
 to-report random-between [a b]
@@ -947,9 +1006,9 @@ end
 @#$#@#$#@
 GRAPHICS-WINDOW
 10
-28
+32
 643
-475
+479
 150
 100
 2.07
@@ -1054,7 +1113,7 @@ MONITOR
 227
 55
 Height above Floor
-word precision Height 2 " m"
+word precision Height 2 \" m\"
 17
 1
 11
@@ -1065,7 +1124,7 @@ MONITOR
 351
 55
 Distance to the right
-word precision car-x 2 " m"
+word precision car-x 2 \" m\"
 17
 1
 11
@@ -1098,7 +1157,7 @@ MONITOR
 102
 472
 Challenge
-(word Level " of " max-level)
+(word Level \" of \" max-level)
 17
 1
 12
@@ -1109,7 +1168,7 @@ MONITOR
 211
 472
 Step
-(word Step " of " n-steps)
+(word Step \" of \" n-steps)
 17
 1
 12
@@ -1137,7 +1196,7 @@ MONITOR
 446
 55
 Car Mass
-word car-mass " g"
+word car-mass \" g\"
 17
 1
 11
@@ -1171,9 +1230,9 @@ NIL
 1
 
 OUTPUT
-212
+213
 219
-636
+637
 471
 13
 
