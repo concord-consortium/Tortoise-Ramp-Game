@@ -78,7 +78,8 @@ Breeds.get("MARKERS").vars =[""];
 Breeds.add("CARS", "car");
 Breeds.get("CARS").vars =[""];
 function dataExportLogEvent(m, plist, unused1, unused2) {
-  logCODAPAction(m, [])
+  logCODAPAction(m + ' Per-run Settings and Data: {"fields": ["Challenge ()", "Step ()", "Start height (m)", "Friction ()", "Mass (g)", "End distance (m)"],"values": [%@, %@, %@, %@, %@, %@]}',
+      [Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20), Prims.precision(Globals.getGlobal(68), 2)])
 }
 
 function dataExportClearLastRun() {
