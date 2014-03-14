@@ -919,6 +919,7 @@ function analyzeData() {
   Globals.setGlobal(66, true);
   analyzeButton.disabled = true;
   setupNewRun.disabled = false;
+  openCODAPTable()
 }
 function setupDataExport() {
   var computationalInputs = [["Challenge", "", 1, 5, true], ["Step", "", 1, 8, true], ["Start height", "m", 0, 1.5, true], ["Friction", "", 0, 0.3, true], ["Mass", "g", 100, 200, true]];
