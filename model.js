@@ -139,12 +139,7 @@ function actOnChanges() {
     Globals.setGlobal(27, false);
   }
   if (!Prims.equality(Globals.getGlobal(0), Globals.getGlobal(50))) {
-    if ((Globals.getGlobal(48) || Globals.getGlobal(12))) {
-//      Globals.setGlobal(0, Globals.getGlobal(50));
-//      myUserMessage("The friction is locked for this challenge.");
-//      Globals.setGlobal(0, Globals.getGlobal(50));
-    }
-    else {
+    if ((!Globals.getGlobal(48) && !Globals.getGlobal(12))) {
       Globals.setGlobal(50, Globals.getGlobal(0));
     }
   }
