@@ -933,7 +933,7 @@ function setupDataExport() {
 }
 function updateRunSeries(endpoint) {
   dataExportUpdateRunSeries(Prims.list(Globals.getGlobal(42), Globals.getGlobal(43), Globals.getGlobal(34), Globals.getGlobal(0), Globals.getGlobal(20), endpoint));
-  dataExportLogEvent("User explorted the model.", createRunParameterList(endpoint), "", "");
+  dataExportLogEvent("User exported the model.", createRunParameterList(endpoint), "", "");
 }
 function createRunParameterList(endpoint) {
   return Prims.list(Globals.getGlobal(34), Globals.getGlobal(0), endpoint, Globals.getGlobal(20));
