@@ -169,7 +169,7 @@ function initialize() {
   Globals.setGlobal(27, false);
   Globals.setGlobal(39, 50);
   Globals.setGlobal(37, 1.34);
-  Globals.setGlobal(38, 0.3);
+  Globals.setGlobal(38, 0.45);
   defineWindow();
   defineTransforms();
   Globals.setGlobal(72, true);
