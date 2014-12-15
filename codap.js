@@ -1,7 +1,6 @@
-function doCommand(action,args) {
+function doCommand(arg, callback) {
   if(window.parent && window.parent.DG) {
-    var x = window.parent.DG.currGameController.doCommand({action: action, args: args});
-    return x;
+    return window.codapPhone.call(arg, callback);
   } else {
     alert("Not in datagames, couldn't do '" + action + "'!");
   }
@@ -9,42 +8,64 @@ function doCommand(action,args) {
 
 function record(series) {
   if(window.parent && window.parent.DG) {
-    parentCase = doCommand('openCase', {
+    doCommand({
+      action: 'openCase',
+      args: {
+        collection: "Challenge",
+        values: series
+      }
+    }, function(result) {
+      doCommand({
+        action: 'closeCase',
+        args: {
           collection: "Challenge",
-          values: series });
-
-        doCommand('closeCase', {
-          collection: "Challenge",
-          caseID: parentCase.caseID
-        });
-  } else {
-    alert("Not in datagames, couldn't record!");
+          caseID: result.caseID
+        }
+      });
+    });
   }
 }
 
 function logCODAPAction(message, args) {
-  doCommand("logAction", { formatStr: message, replaceArgs: args });
+  doCommand({ action: "logAction", args: { formatStr: message, replaceArgs: args }});
 }
 
 function openCODAPTable() {
-  doCommand("createComponent", { type: "DG.TableView", log: false });
+  doCommand({ action: "createComponent", args: { type: "DG.TableView", log: false }});
 }
 
 function clearCODAPData() {
 }
 
 if(window.parent && window.parent.DG) {
-  doCommand('initGame', {
-    name: "Ramp Game",
-    collections: [
-      { name: "Challenge",
-        attrs: [ { name: "Challenge", type: "numeric", description: "BB", precision: 1 },
-                 { name: "Step", type: "numeric", description: "BB", precision: 1 },
-                 { name: "Start Height", type: "numeric", description: "AA", precision: 2, },
-                 { name: "Friction", type: "numeric", description: "BB", precision: 2 },
-                 { name: "Mass", type: "numeric", description: "BB", precision: 2 },
-                 { name: "End Distance", type: "numeric", description: "BB", precision: 2 } ],
-                 }
-               ]
+
+  var initFunc = function(iCmd, callback) {
+    var operation = iCmd && iCmd.operation;
+    var args      = iCmd && iCmd.args;
+    switch(operation) {
+      default: callback({ success: false });
+    }
+  };
+
+  window.codapPhone = new iframePhone.IframePhoneRpcEndpoint(initFunc, "codap-game", window.parent);
+
+  doCommand({
+    action: 'initGame',
+    args: {
+      name: "Ramp Game",
+      dimensions: { width: 775, height: 450 },
+      collections: [
+        {
+          name: "Challenge",
+          attrs: [ { name: "Challenge", type: "numeric", description: "BB", precision: 1 },
+                   { name: "Step", type: "numeric", description: "BB", precision: 1 },
+                   { name: "Start Height", type: "numeric", description: "AA", precision: 2, },
+                   { name: "Friction", type: "numeric", description: "BB", precision: 2 },
+                   { name: "Mass", type: "numeric", description: "BB", precision: 2 },
+                   { name: "End Distance", type: "numeric", description: "BB", precision: 2 } ],
+        }
+      ]
+    }
   });
+
 }
