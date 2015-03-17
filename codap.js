@@ -35,7 +35,16 @@ var initFunc = function(iCmd, callback) {
   var operation = iCmd && iCmd.operation;
   var args      = iCmd && iCmd.args;
   switch(operation) {
-    default: callback({ success: false });
+    case 'saveState':
+      if (typeof saveGameState !== "undefined")
+        callback(saveGameState());
+      break;
+    case 'restoreState':
+      if (typeof restoreGameState !== "undefined")
+        callback(restoreGameState(args.state));
+      break;
+    default:
+      callback({ success: false });
   }
 };
 
