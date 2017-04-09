@@ -3273,7 +3273,7 @@ defaultShapes = {
       this.canvas.width = this.patchWidth * this.patchsize * this.quality;
       this.canvas.height = this.patchHeight * this.patchsize * this.quality;
       this.ctx.setTransform(this.canvas.width / this.patchWidth, 0, 0, -this.canvas.height / this.patchHeight, -(this.minpxcor - .5) * this.canvas.width / this.patchWidth, (this.maxpycor + .5) * this.canvas.height / this.patchHeight);
-      return this.ctx.font = '10pt "Lucida Grande", sans-serif';
+      return this.ctx.font = '10pt "Open Sans, Lato, Arial, Lucida Grande", sans-serif';
     };
 
     View.prototype.xPixToPcor = function(x) {
@@ -3635,7 +3635,7 @@ defaultShapes = {
           slider = document.createElement('div');
           slider.style.position = "absolute";
           slider.style.fontSize = "10pt";
-          slider.style.fontFamily = "sans-serif";
+          slider.style.fontFamily = "Open Sans, Lato, Arial, sans-serif";
             _this.setDimensions(slider, left, top, right, bottom);
           valueLabel = document.createElement('div');
           valueLabel.innerHTML = def;
@@ -3737,7 +3737,7 @@ defaultShapes = {
           monitor.style.position = "absolute";
           monitor.style.fontSize = "10pt";
           monitor.style.backgroundColor = "#c2edcb";
-          monitor.style.fontFamily = "sans-serif";
+          monitor.style.fontFamily = "Open Sans, Lato, Arial, sans-serif";
           _this.setDimensions(monitor, left, top, right, bottom);
           heading = document.createElement('div');
           heading.style.margin = 4;

@@ -1,5 +1,5 @@
 Widgets.addView(0, 0, 643, 425);
-var setupIndex = Widgets.addButton("Setup new run", 98, 224, 211, 258, function() { setupNewRun(); }, false) - 1;
+var setupIndex = Widgets.addButton("Set up new run", 98, 224, 211, 258, function() { setupNewRun(); }, false) - 1;
 var startIndex = Widgets.addButton("Start", 0, 190, 211, 224, function() { startRun(); }, false) - 1;
 var frictionIndex = Widgets.addSlider("Friction", 5, 269, 206, 302,function(newVal) {Globals.setGlobal(0, newVal);}, function() { return Globals.getGlobal(0);}, 0.005, 0.4, 0.18, 0.005) - 1;
 Widgets.addMonitor("Height above floor", 136, 1, 265, 46, function() { return (Dump("") + Dump(Prims.precision(Globals.getGlobal(31), 2)) + Dump(" m")); });
