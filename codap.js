@@ -54,7 +54,7 @@ doCommand({
   action: 'initGame',
   args: {
     name: "Ramp Game",
-    dimensions: { width: 775, height: 450 },
+    dimensions: { width: 645, height: 423 },
     collections: [
       {
         name: "Challenge",
