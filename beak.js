@@ -3273,7 +3273,7 @@ defaultShapes = {
       this.canvas.width = this.patchWidth * this.patchsize * this.quality;
       this.canvas.height = this.patchHeight * this.patchsize * this.quality;
       this.ctx.setTransform(this.canvas.width / this.patchWidth, 0, 0, -this.canvas.height / this.patchHeight, -(this.minpxcor - .5) * this.canvas.width / this.patchWidth, (this.maxpycor + .5) * this.canvas.height / this.patchHeight);
-      return this.ctx.font = '10pt "Lucida Grande", sans-serif';
+      return this.ctx.font = '10pt "Open Sans", Lato, Verdana, "Lucida Grande", sans-serif';
     };
 
     View.prototype.xPixToPcor = function(x) {

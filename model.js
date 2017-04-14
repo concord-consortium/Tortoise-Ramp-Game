@@ -226,7 +226,7 @@ function initialize() {
     AgentSet.setTurtleVariable(7, 9.9);
   });
   Globals.setGlobal(36, true);
-  Globals.setGlobal(2, 46);
+  Globals.setGlobal(2, 54);
   Globals.setGlobal(40, 0);
   Globals.setGlobal(41, 0);
   Globals.setGlobal(1, [0, 0, 0, 0, 0, 0]);
@@ -240,8 +240,9 @@ function initialize() {
   setupGame();
   showTarget();
   myClearOutput();
-  prettyPrint("Challenge 1: Make the car stop in the middle of the red zone. Place the car on the ramp by clicking on it and dragging it.");
-  prettyPrint("As you get better, the red target will get smaller.");
+  prettyPrint("Challenge 1:\n");
+  prettyPrint("Make the car stop in the middle of the red zone. Place the car on the ramp by clicking on it and dragging it.\n");
+  prettyPrint("As you get better, the red target will get smaller.\n");
   setupDataExport();
   setupNewRun();
   world.resetTicks();
@@ -353,11 +354,11 @@ function runCar() {
     Globals.setGlobal(80, (Globals.getGlobal(79) - (Globals.getGlobal(81) / aFloor)));
   }
   if ((Globals.getGlobal(29) >= Globals.getGlobal(80))) {
-    handleRunEnd("You can now analyze your data. Press the 'Analyze Data' button.");
+    handleRunEnd("You can now analyze your data. Press the \"Analyze data\" button.\n");
     return;
   }
   if ((aRamp <= 0)) {
-    handleRunEnd("The car cannot move. Too much friction.");
+    handleRunEnd("The car cannot move. Too much friction.\n");
   }
   if ((Globals.getGlobal(23) < 0)) {
     Globals.setGlobal(23, (Globals.getGlobal(35) + ((Globals.getGlobal(82) * Globals.getGlobal(29)) * Globals.getGlobal(29))));
@@ -376,7 +377,7 @@ function runCar() {
 }
 function crash() {
   Globals.setGlobal(25, 0);
-  handleRunEnd("Oops, you crashed the car!!");
+  handleRunEnd("Oops, you crashed the car!!\n");
   AgentSet.ask(world.turtlesOfBreed("CARS"), true, function() {
     AgentSet.setTurtleVariable(5, "crash");
     var oldSize = AgentSet.getTurtleVariable(10);
@@ -471,7 +472,7 @@ function trackHeight(pairs, x) {
 }
 function setupNewRun() {
   if (!(Globals.getGlobal(66))) {
-    dataExportLogEvent("User tried to setup a new run before analyzing data.", "", "", "");
+    dataExportLogEvent("User tried to set up a new run before analyzing data.", "", "", "");
     return;
   }
   Globals.setGlobal(66, false);
@@ -537,7 +538,7 @@ function startRun() {
   startButton.disabled = true;
   frictionSlider.disabled = true;
   if (Globals.getGlobal(66)) {
-    dataExportLogEvent("User tried to start before pressing 'setup'.", "", "", "");
+    dataExportLogEvent("User tried to start before pressing \"Set up new run\".", "", "", "");
     return;
   }
   if (!(Globals.getGlobal(67))) {
@@ -548,12 +549,12 @@ function startRun() {
     return;
   }
   if ((Globals.getGlobal(23) >= 0)) {
-    prettyPrint("Place the car on the ramp.");
+    prettyPrint("Place the car on the ramp.\n");
     dataExportLogEvent("User tried to start with car on the level floor.", "", "", "");
     return;
   }
   if (!(Globals.getGlobal(36))) {
-    if (myUserYesOrNo_p("If you run now, you will lose data. Press the 'Analyze data' button to save your data.")) {
+    if (myUserYesOrNo_p("If you run now, you will lose data. Press the \"Analyze data\" button to save your data.\n")) {
       return;
     }
   }
@@ -574,13 +575,12 @@ function getNextStep() {
   Globals.setGlobal(73, true);
   if ((Globals.getGlobal(41) > upperBreak)) {
     myClearOutput();
-    prettyPrint((Dump("") + Dump("Congratulations! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points! You advance a step and the target gets smaller.")));
+    prettyPrint((Dump("") + Dump("Congratulations! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points! You advance a step and the target gets smaller.\n")));
     Globals.setGlobal(69, (Globals.getGlobal(43) + 1));
     if ((Globals.getGlobal(69) > Globals.getGlobal(55))) {
       if ((Globals.getGlobal(42) < Globals.getGlobal(62))) {
         myClearOutput();
-        prettyPrint((Dump("") + Dump("Congratulations! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points! You advance to a new challenge!!")));
-        prettyPrint("Before going on, please open your lab notebook and record what you learned in this challenge.");
+        prettyPrint((Dump("") + Dump("Congratulations! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points! You advance to a new challenge!!\n")));
         Globals.setGlobal(27, true);
         Globals.setGlobal(69, 1);
         Globals.setGlobal(70, (Globals.getGlobal(42) + 1));
@@ -591,8 +591,8 @@ function getNextStep() {
         Globals.setGlobal(69, Globals.getGlobal(55));
         if (Globals.getGlobal(72)) {
           myClearOutput();
-          prettyPrint((Dump("") + Dump("Incredible!! You have completed the hardest challenge. You are a winner.")));
-          prettyPrint("You can contine to earn points in this challenge, but first, jot down what you learned in your lab notebook.");
+          prettyPrint((Dump("") + Dump("Incredible!! You have completed the hardest challenge. You are a winner.\n")));
+          prettyPrint("You can contine to earn points in this challenge. What have you learned?\n");
           Globals.setGlobal(72, false);
           Globals.setGlobal(27, true);
         }
@@ -603,16 +603,16 @@ function getNextStep() {
   if ((Globals.getGlobal(41) > lowerBreak)) {
     myClearOutput();
     Globals.setGlobal(73, false);
-    prettyPrint((Dump("") + Dump("OK! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points. Try again.")));
-    prettyPrint((Dump("") + Dump("You have to get ") + Dump(StrictMath.round(upperBreak)) + Dump(" points to advance.")));
+    prettyPrint((Dump("") + Dump("OK! You earned ") + Dump(Globals.getGlobal(41)) + Dump(" points. Try again.\n")));
+    prettyPrint((Dump("") + Dump("You have to get ") + Dump(StrictMath.round(upperBreak)) + Dump(" points to advance.\n")));
     return;
   }
   if ((Globals.getGlobal(41) < lowerBreak)) {
     Globals.setGlobal(73, false);
     myClearOutput();
-    var m = (Dump("") + Dump("Not so good. You score ") + Dump(Globals.getGlobal(41)) + Dump(" points."));
+    var m = (Dump("") + Dump("Not so good. You score ") + Dump(Globals.getGlobal(41)) + Dump(" points.\n\n"));
     if ((Globals.getGlobal(43) > 1)) {
-      m = (Dump("") + Dump(m) + Dump(" Since your score was less than ") + Dump(StrictMath.round(lowerBreak)) + Dump(" you now get a larger target."));
+      m = (Dump("") + Dump(m) + Dump("Since your score was less than ") + Dump(StrictMath.round(lowerBreak)) + Dump(" you now get a larger target.\n"));
     }
     prettyPrint(m);
     Globals.setGlobal(69, (Globals.getGlobal(43) - 1));
@@ -629,11 +629,11 @@ function setupGameLevel() {
   Globals.setGlobal(54, 100);
   Globals.setGlobal(74, false);
   if (Prims.equality(Globals.getGlobal(42), 1)) {
-    Globals.setGlobal(46, "Place the car where you want it to start.");
+    Globals.setGlobal(46, "Place the car where you want it to start.\n");
     if (Prims.equality(Globals.getGlobal(43), 1)) {
-      Globals.setGlobal(46, "Challenge 1: Make the car stop in the center of the red area by changing the car's starting position.");
-      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump(" As you get better, the red target will get smaller.")));
-      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump(" When you press 'Analyze Data' your data is saved and graphed. The graph will help you later.")));
+      Globals.setGlobal(46, "Challenge 1:\n\nMake the car stop in the center of the red area by changing the car's starting position.\n\n");
+      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump("As you get better, the red target will get smaller.\n\n")));
+      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump("When you press \"Analyze data\" your data is saved and graphed. The graph will help you later.\n")));
     }
     Globals.setGlobal(0, 0.18);
     Globals.setGlobal(50, Globals.getGlobal(0));
@@ -648,8 +648,8 @@ function setupGameLevel() {
   if (Prims.equality(Globals.getGlobal(42), 2)) {
     Globals.setGlobal(46, "");
     if (Prims.equality(Globals.getGlobal(43), 1)) {
-      Globals.setGlobal(46, "Challenge 2: Make the car stop in the center of the red area by changing the car's starting position.");
-      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump(" Watch out!! The red band now moves each trial.")));
+      Globals.setGlobal(46, "Challenge 2:\n\nMake the car stop in the center of the red area by changing the car's starting position.\n\n");
+      Globals.setGlobal(46, (Dump("") + Dump(Globals.getGlobal(46)) + Dump("Watch out!! The red band now moves each trial.\n")));
     }
     Globals.setGlobal(0, 0.18);
     Globals.setGlobal(50, Globals.getGlobal(0));
@@ -663,7 +663,7 @@ function setupGameLevel() {
   if (Prims.equality(Globals.getGlobal(42), 3)) {
     Globals.setGlobal(46, "");
     if (Prims.equality(Globals.getGlobal(43), 1)) {
-      Globals.setGlobal(46, "Challenge 3: Make a new car stop in the red area. This car has less friction.");
+      Globals.setGlobal(46, "Challenge 3:\n\nMake a new car stop in the red area. This car has less friction.\n");
     }
     Globals.setGlobal(0, 0.08);
     Globals.setGlobal(20, 100);
@@ -677,7 +677,7 @@ function setupGameLevel() {
   if (Prims.equality(Globals.getGlobal(42), 4)) {
     Globals.setGlobal(46, "");
     if (Prims.equality(Globals.getGlobal(43), 1)) {
-      Globals.setGlobal(46, "Challenge 4: Make this heavier car stop in the center of the red area. This car is twice the mass of the last car, but the friction is back to what it was before.");
+      Globals.setGlobal(46, "Challenge 4:\n\nMake this heavier car stop in the center of the red area.\n\nThis car is twice the mass of the last car, but the friction is back to what it was before.\n");
     }
     Globals.setGlobal(0, 0.18);
     Globals.setGlobal(20, 200);
@@ -694,7 +694,7 @@ function setupGameLevel() {
   if (Prims.equality(Globals.getGlobal(42), 5)) {
     Globals.setGlobal(46, "");
     if (Prims.equality(Globals.getGlobal(43), 1)) {
-      Globals.setGlobal(46, "Challenge 5: Now make the car stop in the center of the red area by changing the friction. ");
+      Globals.setGlobal(46, "Challenge 5:\n\nNow make the car stop in the center of the red area by changing the friction slider to the left.\n");
     }
     Globals.setGlobal(0, 0.18);
     Globals.setGlobal(20, 100);
@@ -778,12 +778,12 @@ function updateScore() {
   if ((StrictMath.abs((Globals.getGlobal(68) - Globals.getGlobal(56))) > (2 * Globals.getGlobal(59)))) {
     Globals.setGlobal(71, (Globals.getGlobal(71) + 1));
     if ((Globals.getGlobal(71) > 2)) {
-      prettyPrint("It looks like you are just guessing. All the information that you need to hit the target is in the graph.");
+      prettyPrint("It looks like you are just guessing. All the information that you need to hit the target is in the graph.\n");
       noop(5);
     }
     if ((Globals.getGlobal(71) > 3)) {
       Globals.setGlobal(71, 4);
-      prettyPrint("You loose 100 points for gussing.");
+      prettyPrint("You loose 100 points for gussing.\n");
       Globals.setGlobal(40, (Globals.getGlobal(40) - 100));
       if ((Globals.getGlobal(40) < 0)) {
         Globals.setGlobal(40, 0);
@@ -799,90 +799,90 @@ function displayHelpMessage() {
   var m = "Sorry, no more hints are available.";
   if (Prims.equality(Globals.getGlobal(42), 1)) {
     if (Prims.equality(numberShownAlready, 0)) {
-      m = "Before starting a run, move the car to where you think it will have enough energy to reach the center of the red target.";
-      m = (Dump("") + Dump(m) + Dump(" Try to get the antenna on the car near the red line in the center of the red target."));
+      m = "Before starting a run, move the car to where you think it will have enough energy to reach the center of the red target.\n\n";
+      m = (Dump("") + Dump(m) + Dump("Try to get the antenna on the car near the red line in the center of the red target.\n"));
     }
     if (Prims.equality(numberShownAlready, 1)) {
-      m = "Press the 'Start' button to start the car rolling down the ramp. ";
+      m = "Press the \"Start\" button to start the car rolling down the ramp. \n";
     }
     if (Prims.equality(numberShownAlready, 2)) {
-      m = "After a good score you advance by one step and the red target gets smaller. ";
+      m = "After a good score you advance by one step and the red target gets smaller. \n";
     }
     if (Prims.equality(numberShownAlready, 3)) {
-      m = "After each run, save your data by pressing the 'Analyze Data' button. ";
+      m = "After each run, save your data by pressing the \"Analyze data\" button. \n";
     }
     if (Prims.equality(numberShownAlready, 4)) {
-      m = "Before you can make a new run, you need to press the 'Setup New Run' button. ";
+      m = "Before you can make a new run, you need to press the \"Set up new run\" button. \n";
     }
     if (Prims.equality(numberShownAlready, 5)) {
-      m = "The 'Setup New Run' button returns the car to its previous starting position. ";
+      m = "The \"Set up new run\" button returns the car to its previous starting position. \n";
     }
   }
   if (Prims.equality(Globals.getGlobal(42), 2)) {
     if (Prims.equality(numberShownAlready, 0)) {
-      m = "In this challenge, the red target moves around each run.";
+      m = "In this challenge, the red target moves around each run.\n";
     }
     if (Prims.equality(numberShownAlready, 1)) {
-      m = "Pay attention to the starting height above the floor. ";
+      m = "Pay attention to the starting height above the floor. \n";
     }
     if (Prims.equality(numberShownAlready, 2)) {
-      m = "The graph can help you find the best place to start the car. ";
+      m = "The graph can help you find the best place to start the car. \n";
     }
     if (Prims.equality(numberShownAlready, 3)) {
-      m = "Look carefully at the graph that shows starting height and distance traveled. ";
+      m = "Look carefully at the graph that shows starting height and distance traveled. \n";
     }
     if (Prims.equality(numberShownAlready, 4)) {
-      m = "Clicking on the gear at the top right of the graph allows you to connect points. Try this.";
+      m = "Clicking on the gear at the top right of the graph allows you to connect points. Try this.\n";
     }
     if (Prims.equality(numberShownAlready, 5)) {
-      m = "Under the gear is an option to draw and drag a line. This can be a big help. ";
+      m = "Under the gear is an option to draw and drag a line. This can be a big help. \n";
     }
     if (Prims.equality(numberShownAlready, 5)) {
-      m = "Expanding the scales on the graph can help you read values from the graph accurately.";
-      m = (Dump("") + Dump(m) + Dump(" Do this by dragging at the end of the scales. To undo this, use the option under the gear to show all the data."));
+      m = "Expanding the scales on the graph can help you read values from the graph accurately.\n";
+      m = (Dump("") + Dump(m) + Dump("\nDo this by dragging at the end of the scales. To undo this, use the option under the gear to show all the data.\n"));
     }
   }
   if (Prims.equality(Globals.getGlobal(42), 3)) {
     if (Prims.equality(numberShownAlready, 0)) {
-      m = "For this challenge, the friction is lower than before.";
+      m = "For this challenge, the friction is lower than before.\n";
     }
     if (Prims.equality(numberShownAlready, 1)) {
-      m = "Now when you save data, the points will trace out a different graph of distance against starting height.";
+      m = "Now when you save data, the points will trace out a different graph of distance against starting height.\n";
     }
     if (Prims.equality(numberShownAlready, 2)) {
-      m = "Use the new graph of distance against starting height to predict starting positions at this challenge.";
+      m = "Use the new graph of distance against starting height to predict starting positions at this challenge.\n";
     }
   }
   if (Prims.equality(numberShownAlready, 3)) {
-    m = "One way to see the pattern is to clear out all the previous graph data before starting.";
+    m = "One way to see the pattern is to clear out all the previous graph data before starting.\n";
   }
   if (Prims.equality(Globals.getGlobal(42), 4)) {
     if (Prims.equality(numberShownAlready, 0)) {
-      m = "For this challenge, you can change only the starting position of the car.";
+      m = "For this challenge, you can change only the starting position of the car.\n";
     }
     if (Prims.equality(numberShownAlready, 1)) {
-      m = "Do you think a heavier car will travel further or less?";
+      m = "Do you think a heavier car will travel further or less?\n";
     }
     if (Prims.equality(numberShownAlready, 2)) {
-      m = "Note the friction value on the slider.";
+      m = "Note the friction value on the slider.\n";
     }
     if (Prims.equality(numberShownAlready, 3)) {
-      m = "Hint: Think about Galileo's experiment at the Tower of Pisa.";
+      m = "Hint: Think about Galileo's experiment at the Tower of Pisa.\n";
     }
   }
   if (Prims.equality(Globals.getGlobal(42), 5)) {
     if (Prims.equality(numberShownAlready, 0)) {
-      m = "For this challenge, you cannot change the starting position of the car or the ramp height--you have to change friction.";
+      m = "For this challenge, you cannot change the starting position of the car or the ramp height. You have to change friction.\n";
     }
     if (Prims.equality(numberShownAlready, 1)) {
-      m = "To let the car go farther, do you think you should increase or decrease friction?";
+      m = "To let the car go farther, do you think you should increase or decrease friction?\n";
     }
     if (Prims.equality(numberShownAlready, 2)) {
-      m = "Hint: Use the graph that has friction on the x-axis.";
+      m = "Hint: Use the graph that has friction on the x-axis.\n";
     }
     if (Prims.equality(numberShownAlready, 3)) {
       m = "On the graph, you want to see only the points generated by challenge 5. ";
-      m = (Dump("") + Dump(m) + Dump("You can do this by selecting only the last items in the table."));
+      m = (Dump("") + Dump(m) + Dump("You can do this by selecting only the last items in the table.\n"));
     }
   }
   prettyPrint(m);
@@ -907,8 +907,8 @@ function analyzeData() {
   updateScore();
   getNextStep();
   if ((Prims.equality(Globals.getGlobal(70), 1) && Prims.equality(Globals.getGlobal(69), 1))) {
-    prettyPrint("Data saved. Do you see the new point on the graph?");
-    prettyPrint("Now setup an new run by pressing the 'Setup New Run' button.");
+    prettyPrint("Data saved. Do you see the new point on the graph?\n");
+    prettyPrint("Now set up a new run by pressing the \"Set up new run\" button.\n");
   }
   Globals.setGlobal(13, false);
   Globals.setGlobal(36, true);
@@ -935,6 +935,7 @@ function createRunParameterList(endpoint) {
 }
 Globals.setGlobal(0, 0.18);world = new World(-150, 150, 0, 85, 2.07, false, false, {"default":{"rotate":true,"elements":[{"xcors":[150.0,40.0,150.0,260.0],"ycors":[5.0,250.0,205.0,250.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"airplane":{"rotate":true,"elements":[{"xcors":[150.0,135.0,120.0,120.0,15.0,15.0,120.0,135.0,105.0,120.0,150.0,180.0,210.0,165.0,180.0,285.0,285.0,180.0,180.0,165.0],"ycors":[0.0,15.0,60.0,105.0,165.0,195.0,180.0,240.0,270.0,285.0,270.0,285.0,270.0,240.0,180.0,195.0,165.0,105.0,60.0,15.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"ambulance":{"rotate":true,"elements":[{"xmin":30.0,"ymin":90.0,"xmax":210.0,"ymax":195.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[296.0,296.0,259.0,244.0,210.0,210.0],"ycors":[190.0,150.0,134.0,104.0,105.0,190.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":195.0,"ymin":60.0,"xmax":195.0,"ymax":105.0,"type":"rectangle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xcors":[238.0,252.0,219.0,218.0],"ycors":[112.0,141.0,141.0,112.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":234.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":69.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xmin":288.0,"ymin":158.0,"xmax":297.0,"ymax":173.0,"type":"rectangle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xmin":289.0,"ymin":180.0,"xmax":298.0,"ymax":172.0,"type":"rectangle","color":"rgba(237, 237, 49, 1.0)","filled":true,"marked":false},{"xmin":29.0,"ymin":151.0,"xmax":298.0,"ymax":158.0,"type":"rectangle","color":"rgba(215, 50, 41, 1.0)","filled":true,"marked":false},{"x1":210.0,"y1":90.0,"x2":210.0,"y2":195.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false},{"xmin":83.0,"ymin":116.0,"xmax":128.0,"ymax":133.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xmin":153.0,"ymin":111.0,"xmax":176.0,"ymax":134.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x1":165.0,"y1":105.0,"x2":165.0,"y2":135.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"xmin":14.0,"ymin":186.0,"xmax":33.0,"ymax":195.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":45.0,"y1":135.0,"x2":75.0,"y2":120.0,"type":"line","color":"rgba(52, 93, 169, 1.0)","filled":false,"marked":false},{"x1":75.0,"y1":135.0,"x2":45.0,"y2":120.0,"type":"line","color":"rgba(52, 93, 169, 1.0)","filled":false,"marked":false},{"x1":60.0,"y1":112.0,"x2":60.0,"y2":142.0,"type":"line","color":"rgba(52, 93, 169, 1.0)","filled":false,"marked":false}]},"arrow":{"rotate":true,"elements":[{"xcors":[150.0,0.0,105.0,105.0,195.0,195.0,300.0],"ycors":[0.0,150.0,150.0,293.0,293.0,150.0,150.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"ball":{"rotate":false,"elements":[{"x":0.0,"y":0.0,"diam":300.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"box":{"rotate":false,"elements":[{"xcors":[150.0,285.0,285.0,150.0],"ycors":[285.0,225.0,75.0,135.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[150.0,15.0,150.0,285.0],"ycors":[135.0,75.0,15.0,75.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[15.0,15.0,150.0,150.0],"ycors":[75.0,225.0,285.0,135.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":150.0,"y1":285.0,"x2":150.0,"y2":135.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false},{"x1":150.0,"y1":135.0,"x2":15.0,"y2":75.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false},{"x1":150.0,"y1":135.0,"x2":285.0,"y2":75.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false}]},"bug":{"rotate":true,"elements":[{"x":96.0,"y":182.0,"diam":108.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":110.0,"y":127.0,"diam":80.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":110.0,"y":75.0,"diam":80.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":150.0,"y1":100.0,"x2":80.0,"y2":30.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":150.0,"y1":100.0,"x2":220.0,"y2":30.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"bus":{"rotate":true,"elements":[{"xcors":[15.0,15.0,15.0,30.0,270.0,285.0,285.0,285.0,270.0,30.0],"ycors":[206.0,150.0,120.0,105.0,105.0,120.0,135.0,206.0,210.0,210.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":36.0,"ymin":126.0,"xmax":231.0,"ymax":159.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x1":60.0,"y1":135.0,"x2":60.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":60.0,"y1":120.0,"x2":60.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":90.0,"y1":120.0,"x2":90.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":120.0,"y1":120.0,"x2":120.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":150.0,"y1":120.0,"x2":150.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":180.0,"y1":120.0,"x2":180.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":210.0,"y1":120.0,"x2":210.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":240.0,"y1":135.0,"x2":240.0,"y2":165.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"xmin":15.0,"ymin":174.0,"xmax":285.0,"ymax":182.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":48.0,"y":187.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xmin":240.0,"ymin":127.0,"xmax":276.0,"ymax":205.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":195.0,"y":187.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x1":257.0,"y1":120.0,"x2":257.0,"y2":207.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"butterfly":{"rotate":true,"elements":[{"xcors":[150.0,209.0,225.0,225.0,195.0,165.0,150.0],"ycors":[165.0,199.0,225.0,255.0,270.0,255.0,240.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[150.0,89.0,75.0,75.0,105.0,135.0,150.0],"ycors":[165.0,198.0,225.0,255.0,270.0,255.0,240.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[139.0,100.0,55.0,25.0,10.0,10.0,25.0,40.0,85.0,139.0],"ycors":[148.0,105.0,90.0,90.0,105.0,135.0,180.0,195.0,194.0,163.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[162.0,200.0,245.0,275.0,290.0,290.0,275.0,260.0,215.0,162.0],"ycors":[150.0,105.0,90.0,90.0,105.0,135.0,180.0,195.0,195.0,165.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[150.0,135.0,120.0,135.0,150.0,165.0,180.0,165.0],"ycors":[255.0,225.0,150.0,120.0,105.0,120.0,150.0,225.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":135.0,"y":90.0,"diam":30.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x1":150.0,"y1":105.0,"x2":195.0,"y2":60.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false},{"x1":150.0,"y1":105.0,"x2":105.0,"y2":60.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false}]},"button":{"rotate":true,"elements":[{"xmin":30.0,"ymin":75.0,"xmax":285.0,"ymax":225.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":false},{"xmin":45.0,"ymin":90.0,"xmax":270.0,"ymax":210.0,"type":"rectangle","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":true}]},"car":{"rotate":true,"elements":[{"xcors":[300.0,279.0,261.0,240.0,226.0,213.0,203.0,185.0,159.0,135.0,75.0,0.0,0.0,0.0,300.0,300.0],"ycors":[180.0,164.0,144.0,135.0,132.0,106.0,84.0,63.0,50.0,50.0,60.0,150.0,165.0,225.0,225.0,180.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":180.0,"y":180.0,"diam":90.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":30.0,"y":180.0,"diam":90.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[162.0,132.0,134.0,209.0,194.0,189.0,180.0],"ycors":[80.0,78.0,135.0,135.0,105.0,96.0,89.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":47.0,"y":195.0,"diam":58.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":195.0,"y":195.0,"diam":58.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":150.0,"ymin":0.0,"xmax":165.0,"ymax":60.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"circle 2":{"rotate":false,"elements":[{"x":0.0,"y":0.0,"diam":300.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":30.0,"y":30.0,"diam":240.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"cow":{"rotate":false,"elements":[{"xcors":[200.0,197.0,179.0,177.0,166.0,140.0,93.0,78.0,72.0,49.0,48.0,37.0,25.0,25.0,45.0,103.0,179.0,198.0,252.0,272.0,293.0,285.0,255.0,242.0,224.0],"ycors":[193.0,249.0,249.0,196.0,187.0,189.0,191.0,179.0,211.0,209.0,181.0,149.0,120.0,89.0,72.0,84.0,75.0,76.0,64.0,81.0,103.0,121.0,121.0,118.0,167.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[73.0,86.0,62.0,48.0],"ycors":[210.0,251.0,249.0,208.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[25.0,16.0,9.0,23.0,25.0,39.0],"ycors":[114.0,195.0,204.0,213.0,200.0,123.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"crash":{"rotate":true,"elements":[{"xcors":[135.0,120.0,15.0,90.0,30.0,120.0,150.0,165.0,300.0,195.0,240.0,150.0],"ycors":[30.0,135.0,75.0,165.0,255.0,210.0,315.0,195.0,225.0,165.0,60.0,120.0],"type":"polygon","color":"rgba(237, 237, 49, 1.0)","filled":true,"marked":false},{"xcors":[135.0,90.0,105.0,30.0,120.0,45.0,120.0,195.0,150.0,240.0,150.0,165.0],"ycors":[135.0,75.0,150.0,135.0,180.0,210.0,195.0,270.0,180.0,150.0,150.0,45.0],"type":"polygon","color":"rgba(215, 50, 41, 1.0)","filled":true,"marked":false}]},"cylinder":{"rotate":false,"elements":[{"x":0.0,"y":0.0,"diam":300.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"dot":{"rotate":false,"elements":[{"x":90.0,"y":90.0,"diam":120.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"engine":{"rotate":true,"elements":[{"xmin":30.0,"ymin":105.0,"xmax":240.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[240.0,270.0,180.0,210.0],"ycors":[105.0,30.0,30.0,105.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[195.0,270.0,300.0,195.0],"ycors":[180.0,180.0,210.0,210.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":0.0,"y":165.0,"diam":90.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":240.0,"y":225.0,"diam":30.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":90.0,"y":165.0,"diam":90.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":195.0,"y":225.0,"diam":30.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":0.0,"ymin":30.0,"xmax":105.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":30.0,"ymin":60.0,"xmax":75.0,"ymax":105.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[195.0,165.0,240.0,240.0],"ycors":[180.0,150.0,150.0,180.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":135.0,"ymin":75.0,"xmax":165.0,"ymax":105.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":225.0,"ymin":120.0,"xmax":255.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":30.0,"ymin":203.0,"xmax":150.0,"ymax":218.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"face happy":{"rotate":false,"elements":[{"x":8.0,"y":8.0,"diam":285.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":60.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":180.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[150.0,90.0,62.0,47.0,67.0,90.0,109.0,150.0,192.0,210.0,227.0,251.0,236.0,212.0],"ycors":[255.0,239.0,213.0,191.0,179.0,203.0,218.0,225.0,218.0,203.0,181.0,194.0,217.0,240.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"face neutral":{"rotate":false,"elements":[{"x":8.0,"y":7.0,"diam":285.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":60.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":180.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xmin":60.0,"ymin":195.0,"xmax":240.0,"ymax":225.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"face sad":{"rotate":false,"elements":[{"x":8.0,"y":8.0,"diam":285.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":60.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":180.0,"y":75.0,"diam":60.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[150.0,90.0,62.0,47.0,67.0,90.0,109.0,150.0,192.0,210.0,227.0,251.0,236.0,212.0],"ycors":[168.0,184.0,210.0,232.0,244.0,220.0,205.0,198.0,205.0,220.0,242.0,229.0,206.0,183.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"fish":{"rotate":false,"elements":[{"xcors":[44.0,21.0,15.0,0.0,15.0,0.0,13.0,20.0,45.0],"ycors":[131.0,87.0,86.0,120.0,150.0,180.0,214.0,212.0,166.0],"type":"polygon","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xcors":[135.0,119.0,95.0,76.0,46.0,60.0],"ycors":[195.0,235.0,218.0,210.0,204.0,165.0],"type":"polygon","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xcors":[75.0,83.0,71.0,86.0,166.0,135.0],"ycors":[45.0,77.0,103.0,114.0,78.0,60.0],"type":"polygon","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xcors":[30.0,151.0,226.0,280.0,292.0,292.0,287.0,270.0,195.0,151.0,30.0],"ycors":[136.0,77.0,81.0,119.0,146.0,160.0,170.0,195.0,210.0,212.0,166.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":215.0,"y":106.0,"diam":30.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"flag":{"rotate":false,"elements":[{"xmin":60.0,"ymin":15.0,"xmax":75.0,"ymax":300.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[90.0,270.0,90.0],"ycors":[150.0,90.0,30.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":75.0,"y1":135.0,"x2":90.0,"y2":135.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":75.0,"y1":45.0,"x2":90.0,"y2":45.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"flower":{"rotate":false,"elements":[{"xcors":[135.0,165.0,180.0,180.0,150.0,165.0,195.0,195.0,165.0],"ycors":[120.0,165.0,210.0,240.0,300.0,300.0,240.0,195.0,135.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"x":85.0,"y":132.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":130.0,"y":147.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":192.0,"y":85.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":85.0,"y":40.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":177.0,"y":40.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":177.0,"y":132.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":70.0,"y":85.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":130.0,"y":25.0,"diam":38.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":96.0,"y":51.0,"diam":108.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":113.0,"y":68.0,"diam":74.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[189.0,219.0,249.0,279.0,234.0],"ycors":[233.0,188.0,173.0,188.0,218.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[180.0,150.0,105.0,75.0,135.0],"ycors":[255.0,210.0,210.0,240.0,240.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false}]},"house":{"rotate":false,"elements":[{"xmin":45.0,"ymin":120.0,"xmax":255.0,"ymax":285.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":120.0,"ymin":210.0,"xmax":180.0,"ymax":285.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[15.0,150.0,285.0],"ycors":[120.0,15.0,120.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":30.0,"y1":120.0,"x2":270.0,"y2":120.0,"type":"line","color":"rgba(0, 0, 0, 1.0)","filled":false,"marked":false}]},"leaf":{"rotate":false,"elements":[{"xcors":[150.0,135.0,120.0,60.0,30.0,60.0,60.0,15.0,30.0,15.0,40.0,45.0,60.0,90.0,105.0,120.0,105.0,120.0,135.0,150.0,165.0,180.0,195.0,180.0,195.0,210.0,240.0,255.0,263.0,285.0,270.0,285.0,240.0,240.0,270.0,240.0,180.0,165.0],"ycors":[210.0,195.0,210.0,210.0,195.0,180.0,165.0,135.0,120.0,105.0,104.0,90.0,90.0,105.0,120.0,120.0,60.0,60.0,30.0,15.0,30.0,60.0,60.0,120.0,120.0,105.0,90.0,90.0,104.0,105.0,120.0,135.0,165.0,180.0,195.0,210.0,210.0,195.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[135.0,135.0,120.0,105.0,105.0,135.0,165.0,165.0],"ycors":[195.0,240.0,255.0,255.0,285.0,285.0,240.0,195.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"line":{"rotate":false,"elements":[{"xmin":150.0,"ymin":0.0,"xmax":165.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"line half":{"rotate":true,"elements":[{"x1":150.0,"y1":0.0,"x2":150.0,"y2":150.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"pentagon":{"rotate":false,"elements":[{"xcors":[150.0,15.0,60.0,240.0,285.0],"ycors":[15.0,120.0,285.0,285.0,120.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"person":{"rotate":false,"elements":[{"x":110.0,"y":5.0,"diam":80.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[105.0,120.0,90.0,105.0,135.0,150.0,165.0,195.0,210.0,180.0,195.0],"ycors":[90.0,195.0,285.0,300.0,300.0,225.0,300.0,300.0,285.0,195.0,90.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":127.0,"ymin":79.0,"xmax":172.0,"ymax":94.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[195.0,240.0,225.0,165.0],"ycors":[90.0,150.0,180.0,105.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[105.0,60.0,75.0,135.0],"ycors":[90.0,150.0,180.0,105.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"plant":{"rotate":false,"elements":[{"xmin":135.0,"ymin":90.0,"xmax":165.0,"ymax":300.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[135.0,90.0,45.0,75.0,135.0],"ycors":[255.0,210.0,195.0,255.0,285.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[165.0,210.0,255.0,225.0,165.0],"ycors":[255.0,210.0,195.0,255.0,285.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[135.0,90.0,45.0,75.0,135.0],"ycors":[180.0,135.0,120.0,180.0,210.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[165.0,165.0,225.0,255.0,210.0],"ycors":[180.0,210.0,180.0,120.0,135.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[135.0,90.0,45.0,75.0,135.0],"ycors":[105.0,60.0,45.0,105.0,135.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[165.0,165.0,225.0,255.0,210.0],"ycors":[105.0,135.0,105.0,45.0,60.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[135.0,120.0,150.0,180.0,165.0],"ycors":[90.0,45.0,15.0,45.0,90.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"sheep":{"rotate":false,"elements":[{"x":203.0,"y":65.0,"diam":88.0,"type":"circle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"x":70.0,"y":65.0,"diam":162.0,"type":"circle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"x":150.0,"y":105.0,"diam":120.0,"type":"circle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"xcors":[218.0,240.0,255.0,278.0],"ycors":[120.0,165.0,165.0,120.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":false},{"x":214.0,"y":72.0,"diam":67.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":false},{"xmin":164.0,"ymin":223.0,"xmax":179.0,"ymax":298.0,"type":"rectangle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"xcors":[45.0,30.0,30.0,15.0,45.0],"ycors":[285.0,285.0,240.0,195.0,210.0],"type":"polygon","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"x":3.0,"y":83.0,"diam":150.0,"type":"circle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"xmin":65.0,"ymin":221.0,"xmax":80.0,"ymax":296.0,"type":"rectangle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"xcors":[195.0,210.0,210.0,240.0,195.0],"ycors":[285.0,285.0,240.0,210.0,210.0],"type":"polygon","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":true},{"xcors":[276.0,285.0,302.0,294.0],"ycors":[85.0,105.0,99.0,83.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":false},{"xcors":[219.0,210.0,193.0,201.0],"ycors":[85.0,105.0,99.0,83.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":false}]},"square":{"rotate":false,"elements":[{"xmin":30.0,"ymin":30.0,"xmax":270.0,"ymax":270.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"square 2":{"rotate":false,"elements":[{"xmin":30.0,"ymin":30.0,"xmax":270.0,"ymax":270.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":60.0,"ymin":60.0,"xmax":240.0,"ymax":240.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"star":{"rotate":false,"elements":[{"xcors":[151.0,185.0,298.0,207.0,242.0,151.0,59.0,94.0,3.0,116.0],"ycors":[1.0,108.0,108.0,175.0,282.0,216.0,282.0,175.0,108.0,108.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"target":{"rotate":false,"elements":[{"x":0.0,"y":0.0,"diam":300.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":30.0,"y":30.0,"diam":240.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":60.0,"y":60.0,"diam":180.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":90.0,"y":90.0,"diam":120.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":120.0,"y":120.0,"diam":60.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"tick mark":{"rotate":true,"elements":[{"xmin":135.0,"ymin":90.0,"xmax":165.0,"ymax":240.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"tiny dot":{"rotate":true,"elements":[{"x":135.0,"y":135.0,"diam":30.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"train":{"rotate":false,"elements":[{"xmin":30.0,"ymin":105.0,"xmax":240.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[240.0,270.0,180.0,210.0],"ycors":[105.0,30.0,30.0,105.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[195.0,270.0,300.0,195.0],"ycors":[180.0,180.0,210.0,210.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":0.0,"y":165.0,"diam":90.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":240.0,"y":225.0,"diam":30.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":90.0,"y":165.0,"diam":90.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":195.0,"y":225.0,"diam":30.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":0.0,"ymin":30.0,"xmax":105.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":30.0,"ymin":60.0,"xmax":75.0,"ymax":105.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[195.0,165.0,240.0,240.0],"ycors":[180.0,150.0,150.0,180.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":135.0,"ymin":75.0,"xmax":165.0,"ymax":105.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":225.0,"ymin":120.0,"xmax":255.0,"ymax":150.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":30.0,"ymin":203.0,"xmax":150.0,"ymax":218.0,"type":"rectangle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"tree":{"rotate":false,"elements":[{"x":118.0,"y":3.0,"diam":94.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":120.0,"ymin":195.0,"xmax":180.0,"ymax":300.0,"type":"rectangle","color":"rgba(157, 110, 72, 1.0)","filled":true,"marked":false},{"x":65.0,"y":21.0,"diam":108.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":116.0,"y":41.0,"diam":127.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":45.0,"y":90.0,"diam":120.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":104.0,"y":74.0,"diam":152.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"triangle":{"rotate":false,"elements":[{"xcors":[150.0,15.0,285.0],"ycors":[30.0,255.0,255.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"triangle 2":{"rotate":false,"elements":[{"xcors":[150.0,15.0,285.0],"ycors":[30.0,255.0,255.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[151.0,225.0,75.0],"ycors":[99.0,223.0,224.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false}]},"truck":{"rotate":true,"elements":[{"xmin":4.0,"ymin":45.0,"xmax":195.0,"ymax":187.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[296.0,296.0,259.0,244.0,208.0,207.0],"ycors":[193.0,150.0,134.0,104.0,104.0,194.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xmin":195.0,"ymin":60.0,"xmax":195.0,"ymax":105.0,"type":"rectangle","color":"rgba(255, 255, 255, 1.0)","filled":true,"marked":false},{"xcors":[238.0,252.0,219.0,218.0],"ycors":[112.0,141.0,141.0,112.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":234.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xmin":181.0,"ymin":185.0,"xmax":214.0,"ymax":194.0,"type":"rectangle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":144.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":24.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x":24.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x":144.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x":234.0,"y":174.0,"diam":42.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"turtle":{"rotate":true,"elements":[{"xcors":[215.0,240.0,246.0,228.0,215.0,193.0],"ycors":[204.0,233.0,254.0,266.0,252.0,210.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[195.0,225.0,245.0,260.0,269.0,261.0,240.0,225.0,210.0],"ycors":[90.0,75.0,75.0,89.0,108.0,124.0,105.0,105.0,105.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[105.0,75.0,55.0,40.0,31.0,39.0,60.0,75.0,90.0],"ycors":[90.0,75.0,75.0,89.0,108.0,124.0,105.0,105.0,105.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[132.0,134.0,107.0,108.0,150.0,192.0,192.0,169.0,172.0],"ycors":[85.0,64.0,51.0,17.0,2.0,18.0,52.0,65.0,87.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[85.0,60.0,54.0,72.0,85.0,107.0],"ycors":[204.0,233.0,254.0,266.0,252.0,210.0],"type":"polygon","color":"rgba(89, 176, 60, 1.0)","filled":true,"marked":false},{"xcors":[119.0,179.0,209.0,224.0,220.0,175.0,128.0,81.0,74.0,88.0],"ycors":[75.0,75.0,101.0,135.0,225.0,261.0,261.0,224.0,135.0,99.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"wheel":{"rotate":false,"elements":[{"x":3.0,"y":3.0,"diam":294.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x":30.0,"y":30.0,"diam":240.0,"type":"circle","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"x1":150.0,"y1":285.0,"x2":150.0,"y2":15.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":15.0,"y1":150.0,"x2":285.0,"y2":150.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x":120.0,"y":120.0,"diam":60.0,"type":"circle","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"x1":216.0,"y1":40.0,"x2":79.0,"y2":269.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":40.0,"y1":84.0,"x2":269.0,"y2":221.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":40.0,"y1":216.0,"x2":269.0,"y2":79.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true},{"x1":84.0,"y1":40.0,"x2":221.0,"y2":269.0,"type":"line","color":"rgba(141, 141, 141, 1.0)","filled":false,"marked":true}]},"wolf":{"rotate":false,"elements":[{"xcors":[253.0,245.0,245.0],"ycors":[133.0,131.0,133.0],"type":"polygon","color":"rgba(0, 0, 0, 1.0)","filled":true,"marked":false},{"xcors":[2.0,13.0,30.0,38.0,38.0,20.0,20.0,27.0,38.0,40.0,31.0,31.0,60.0,68.0,75.0,66.0,65.0,82.0,84.0,100.0,103.0,77.0,79.0,100.0,98.0,119.0,143.0,160.0,166.0,172.0,173.0,167.0,160.0,154.0,169.0,178.0,186.0,198.0,200.0,217.0,219.0,207.0,195.0,192.0,210.0,227.0,242.0,259.0,284.0,277.0,293.0,299.0,297.0,273.0,270.0],"ycors":[194.0,197.0,191.0,193.0,205.0,226.0,257.0,265.0,266.0,260.0,253.0,230.0,206.0,198.0,209.0,228.0,243.0,261.0,268.0,267.0,261.0,239.0,231.0,207.0,196.0,201.0,202.0,195.0,210.0,213.0,238.0,251.0,248.0,265.0,264.0,247.0,240.0,260.0,271.0,271.0,262.0,258.0,230.0,198.0,184.0,164.0,144.0,145.0,151.0,141.0,140.0,134.0,127.0,119.0,105.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[-1.0,14.0,36.0,40.0,53.0,82.0,134.0,159.0,188.0,227.0,236.0,238.0,268.0,269.0,281.0,269.0,269.0],"ycors":[195.0,180.0,166.0,153.0,140.0,131.0,133.0,126.0,115.0,108.0,102.0,98.0,86.0,92.0,87.0,103.0,113.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]},"x":{"rotate":false,"elements":[{"xcors":[270.0,225.0,30.0,75.0],"ycors":[75.0,30.0,225.0,270.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true},{"xcors":[30.0,75.0,270.0,225.0],"ycors":[75.0,30.0,225.0,270.0],"type":"polygon","color":"rgba(141, 141, 141, 1.0)","filled":true,"marked":true}]}}, {"default":{}}, 1);
 
+
 function saveGameState() {
   var arr = [];
   for (i = 0; i <= 84; i++) {
@@ -955,5 +956,4 @@ function restoreGameState(state) {
   setupNewRun();
 
   return { success: true };
-
 }
